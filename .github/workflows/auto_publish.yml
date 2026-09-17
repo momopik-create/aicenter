@@ -34,4 +34,4 @@ jobs:
           git config --global user.name "Auto-Publisher"
           git config --global user.email "bot@github.com"
           git add src/content/products/
-          git diff --quiet && git diff --staged --quiet || (git commit -m "auto: generate new product review" && git push)
+          git diff --quiet && git diff --staged --quiet || (git commit -m "auto: generate new product review" && git push) 
