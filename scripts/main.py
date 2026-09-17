@@ -4,15 +4,13 @@ from google import genai
 from slugify import slugify
 
 def generate_review():
-    # ۱. اتصال به کلید API
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
-        print("Error: GEMINI_API_KEY not found.")
-        return
+        raise ValueError("GEMINI_API_KEY environment variable is missing.")
 
+    # مقداردهی صحیح بر اساس آخرین ورژن SDK
     client = genai.Client(api_key=api_key)
 
-    # ۲. پرومپت عمومی و نیچ-مستقل
     prompt = """
     You are an expert digital product and software reviewer.
     Select ONE popular, trending AI tool or SaaS software from 2026.
@@ -43,7 +41,6 @@ def generate_review():
 
     content = response.text
 
-    # ۳. استخراج نام برای فایل
     match = re.search(r'title:\s*"([^"]+)"', content)
     if match:
         title = match.group(1).split('-')[0].strip()
@@ -51,7 +48,6 @@ def generate_review():
     else:
         slug = "review-item"
 
-    # ۴. ذخیره در پوشه محصولات
     output_dir = "src/content/products"
     os.makedirs(output_dir, exist_ok=True)
     file_path = os.path.join(output_dir, f"{slug}.md")
