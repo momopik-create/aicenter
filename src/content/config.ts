@@ -6,8 +6,8 @@ const productsCollection = defineCollection({
     title: z.string(),
     description: z.string(),
     rating: z.number(),
-    affiliate_url: z.string().url(),
     date: z.string(),
+    pricing_tier: z.string().optional(),
   }),
 });
 
