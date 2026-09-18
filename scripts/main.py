@@ -11,8 +11,8 @@ TOOLS_LIST = [
     "GrammarlyGO", "Surfer SEO", "Make.com", "Zapier Central"
 ]
 
-# استفاده از مدل‌های معتبر و استاندارد با قابلیت fallback
-MODELS_TO_TRY = ['gemini-3.6-flash', 'gemini-2.5-flash', 'gemini-2.5-pro']
+# استفاده دقیق از مدل‌های معتبر طبق آخرین متدهای پشتیبانی‌شده توسط گوگل
+MODELS_TO_TRY = ['gemini-3.6-flash', 'gemini-3.1-pro-preview']
 
 def generate_review():
     api_key = os.environ.get("GEMINI_API_KEY")
@@ -49,7 +49,7 @@ def generate_review():
     
     for model_name in MODELS_TO_TRY:
         print(f"Attempting to generate review using {model_name}...")
-        for attempt in range(1, 3):
+        for attempt in range(1, 4):
             try:
                 response = client.models.generate_content(
                     model=model_name,
@@ -60,12 +60,12 @@ def generate_review():
                 break
             except Exception as e:
                 print(f"Attempt {attempt} with {model_name} failed: {e}")
-                time.sleep(12)  # افزایش زمان انتظار به ۱۲ ثانیه برای رفع ۵۰۳
+                time.sleep(15)  # افزایش زمان انتظار به ۱۵ ثانیه برای رد کردن محدودیت ترافیکی (503)
         if content:
             break
 
     if not content:
-        raise ValueError("Failed to generate content: all models were unavailable.")
+        raise ValueError("Failed to generate content: all active models were unavailable.")
 
     # پاک‌سازی قالب خروجی
     if content.startswith("```markdown"):
