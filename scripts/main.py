@@ -11,8 +11,8 @@ TOOLS_LIST = [
     "GrammarlyGO", "Surfer SEO", "Make.com", "Zapier Central"
 ]
 
-# لیست مدل‌ها به ترتیب اولویت
-MODELS_TO_TRY = ['gemini-3.6-flash', 'gemini-1.5-flash']
+# استفاده از مدل‌های معتبر و استاندارد با قابلیت fallback
+MODELS_TO_TRY = ['gemini-3.6-flash', 'gemini-2.5-flash', 'gemini-2.5-pro']
 
 def generate_review():
     api_key = os.environ.get("GEMINI_API_KEY")
@@ -60,7 +60,7 @@ def generate_review():
                 break
             except Exception as e:
                 print(f"Attempt {attempt} with {model_name} failed: {e}")
-                time.sleep(5)
+                time.sleep(12)  # افزایش زمان انتظار به ۱۲ ثانیه برای رفع ۵۰۳
         if content:
             break
 
