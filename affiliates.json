@@ -2,5 +2,7 @@
   "default": "https://yourdomain.com/go/recommend",
   "chatgpt": "https://partner.openai.com/ref=YOUR_ID",
   "midjourney": "https://midjourney.com/?via=YOUR_ID",
-  "claude": "https://anthropic.com/?ref=YOUR_ID"
+  "claude": "https://anthropic.com/?ref=YOUR_ID",
+  "jasper": "https://jasper.ai?fpr=YOUR_ID",
+  "copy-ai": "https://copy.ai?via=YOUR_ID"
 }
