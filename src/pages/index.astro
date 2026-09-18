@@ -1,32 +1,36 @@
 ---
 import { getCollection } from 'astro:content';
 
-const products = await getCollection('products');
+const products = await getCollection('products').catch(() => []);
 ---
 
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>AI Center - Latest Reviews</title>
+    <title>AI Center - Tools & Software Reviews</title>
     <meta name="viewport" content="width=device-width" />
     <style>
       body { font-family: system-ui, sans-serif; max-width: 800px; margin: 0 auto; padding: 2rem; background: #0f172a; color: #f8fafc; }
-      h1 { color: #38bdf8; }
+      h1 { color: #38bdf8; text-align: center; }
+      p.subtitle { text-align: center; color: #94a3b8; }
       .grid { display: grid; gap: 1.5rem; margin-top: 2rem; }
-      .card { background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 1.5rem; }
-      a { color: #38bdf8; text-decoration: none; font-weight: bold; }
+      .card { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 1.5rem; transition: transform 0.2s; }
+      .card:hover { transform: translateY(-3px); border-color: #38bdf8; }
+      .card h2 { margin-top: 0; color: #f8fafc; }
+      .card a { color: #38bdf8; text-decoration: none; font-weight: bold; }
     </style>
   </head>
   <body>
     <h1>AI Tools & Software Hub</h1>
-    <p>Automated unbiased reviews generated daily.</p>
+    <p class="subtitle">Automated, unbiased daily reviews of the latest AI tools.</p>
     
     <div class="grid">
       {products.map(product => (
         <div class="card">
           <h2>{product.data.title}</h2>
           <p>{product.data.description}</p>
-          <p><strong>Rating:</strong> ⭐ {product.data.rating}</p>
+          <p><strong>Rating:</strong> ⭐ {product.data.rating}/5</p>
+          <a href={`/products/${product.slug}`}>Read Full Review →</a>
         </div>
       ))}
     </div>
