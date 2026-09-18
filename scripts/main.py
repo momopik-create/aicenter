@@ -1,9 +1,10 @@
 import os
 import random
 import datetime
+import time
 from google import genai
+from google.genai.errors import APIError
 
-# لیست محبوب‌ترین و جدیدترین ابزارهای هوش مصنوعی و نرم‌افزارها
 TOOLS_LIST = [
     "ChatGPT Plus", "Midjourney v6", "Claude 3.5 Sonnet", "Jasper AI", 
     "Copy.ai", "Descript", "Runway Gen-2", "ElevenLabs", "Perplexity AI",
@@ -17,8 +18,6 @@ def generate_review():
         raise ValueError("GEMINI_API_KEY environment variable is missing!")
 
     client = genai.Client(api_key=api_key)
-    
-    # انتخاب تصادفی یک ابزار برای بررسی روزانه
     selected_tool = random.choice(TOOLS_LIST)
     date_str = datetime.datetime.now().strftime("%Y-%m-%d")
     slug = selected_tool.lower().replace(" ", "-").replace(".", "")
@@ -31,28 +30,40 @@ def generate_review():
     2. Frontmatter fields must include:
        title: "{selected_tool} Review (2026): Features, Pricing & Alternatives"
        description: "A concise 1-2 sentence summary of {selected_tool}."
-       rating: 4.8 (Provide a realistic float rating between 4.0 and 5.0)
+       rating: 4.8
        date: "{date_str}"
        pricing_tier: "Paid" or "Freemium" or "Free Trial"
     3. The article content MUST include:
        - **Executive Summary**: Brief overview with key takeaways.
-       - **Pros & Cons**: Use clear Markdown lists with green checkmarks (✅) for pros and red crosses (❌) for cons.
+       - **Pros & Cons**: Use clear Markdown lists with green checkmarks (✅) and red crosses (❌).
        - **Key Features**: Bullet points of top capabilities.
        - **Pricing Breakdown**: A clean Markdown table showing plans and costs.
        - **Verdict & Recommendation**: Who is this tool best for?
     
-    Do NOT include extra markdown fences outside the output (like ```markdown). Just return the content starting with ---.
+    Do NOT include extra markdown fences outside the output. Return content starting with ---.
     """
 
     print(f"Generating review for {selected_tool} with Gemini...")
-    response = client.models.generate_content(
-        model='gemini-3.6-flash',
-        contents=prompt
-    )
     
-    content = response.text.strip()
-    
-    # پاک‌سازی در صورت وجود Markdown codeblock نامناسب
+    # مکانیزم تلاش مجدد در صورت شلوغی سرور (Max 3 retries)
+    max_retries = 3
+    for attempt in range(1, max_retries + 1):
+        try:
+            response = client.models.generate_content(
+                model='gemini-3.6-flash',
+                contents=prompt
+            )
+            content = response.text.strip()
+            break  # در صورت موفقیت از حلقه خارج می‌شود
+        except APIError as e:
+            print(f"Attempt {attempt} failed with API error: {e}")
+            if attempt < max_retries:
+                print("Waiting 10 seconds before retrying...")
+                time.sleep(10)
+            else:
+                raise e
+
+    # پاک‌سازی قالب خروجی
     if content.startswith("```markdown"):
         content = content[11:]
     if content.startswith("```"):
@@ -61,7 +72,6 @@ def generate_review():
         content = content[:-3]
     content = content.strip()
 
-    # ذخیره فایل در مسیر content/products/
     os.makedirs("src/content/products", exist_ok=True)
     file_path = f"src/content/products/{slug}.md"
     
