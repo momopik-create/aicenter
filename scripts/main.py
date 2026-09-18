@@ -3,7 +3,6 @@ import random
 import datetime
 import time
 from google import genai
-from google.genai.errors import APIError
 
 TOOLS_LIST = [
     "ChatGPT Plus", "Midjourney v6", "Claude 3.5 Sonnet", "Jasper AI", 
@@ -45,23 +44,31 @@ def generate_review():
 
     print(f"Generating review for {selected_tool} with Gemini...")
     
-    # مکانیزم تلاش مجدد در صورت شلوغی سرور (Max 3 retries)
-    max_retries = 3
+    content = None
+    max_retries = 4
+    delay = 10  # شروع انتظار با ۱۰ ثانیه
+
     for attempt in range(1, max_retries + 1):
         try:
             response = client.models.generate_content(
-                model='gemini-3.6-flash',
+                model='gemini-2.5-flash',
                 contents=prompt
             )
             content = response.text.strip()
-            break  # در صورت موفقیت از حلقه خارج می‌شود
-        except APIError as e:
-            print(f"Attempt {attempt} failed with API error: {e}")
+            print("Successfully received response from Gemini API.")
+            break
+        except Exception as e:
+            print(f"Attempt {attempt} failed with error: {e}")
             if attempt < max_retries:
-                print("Waiting 10 seconds before retrying...")
-                time.sleep(10)
+                print(f"Waiting {delay} seconds before retrying...")
+                time.sleep(delay)
+                delay *= 2  # دو برابر کردن زمان انتظار در هر تلاش
             else:
+                print("All retries exhausted.")
                 raise e
+
+    if not content:
+        raise ValueError("Failed to generate content: empty response.")
 
     # پاک‌سازی قالب خروجی
     if content.startswith("```markdown"):
