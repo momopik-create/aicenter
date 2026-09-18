@@ -1,0 +1,52 @@
+---
+import { getCollection } from 'astro:content';
+import affiliateLinks from '../../../affiliates.json';
+
+export async function getStaticPaths() {
+  const products = await getCollection('products');
+  return products.map(product => ({
+    params: { slug: product.slug },
+    props: { product },
+  }));
+}
+
+const { product } = Astro.props;
+const { Content } = await product.render();
+
+// یافتن لینک افیلیت متناسب با محصول یا استفاده از لینک پیش‌فرض
+const key = Object.keys(affiliateLinks).find(k => product.slug.includes(k)) || 'default';
+const buyLink = affiliateLinks[key] || affiliateLinks.default;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>{product.data.title} - AI Review</title>
+    <meta name="viewport" content="width=device-width" />
+    <style>
+      body { font-family: system-ui, sans-serif; max-width: 750px; margin: 0 auto; padding: 2rem; background: #0f172a; color: #f8fafc; line-height: 1.6; }
+      h1 { color: #38bdf8; margin-bottom: 0.5rem; }
+      .meta { display: flex; gap: 1rem; color: #94a3b8; font-size: 0.9rem; margin-bottom: 2rem; }
+      .cta-btn { display: inline-block; background: #0284c7; color: white; padding: 0.8rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: bold; margin: 1.5rem 0; text-align: center; }
+      .cta-btn:hover { background: #0369a1; }
+      .content { background: #1e293b; padding: 2rem; border-radius: 12px; border: 1px solid #334155; }
+      a { color: #38bdf8; }
+    </style>
+  </head>
+  <body>
+    <a href="/">← Back to Home</a>
+    <h1>{product.data.title}</h1>
+    <div class="meta">
+      <span>Rating: ⭐ {product.data.rating}/5</span>
+      <span>Published: {product.data.date}</span>
+    </div>
+
+    <a href={buyLink} target="_blank" rel="noopener noreferrer" class="cta-btn">
+      Try {product.data.title.split(' ')[0]} Now →
+    </a>
+
+    <div class="content">
+      <Content />
+    </div>
+  </body>
+</html>
