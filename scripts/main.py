@@ -46,12 +46,13 @@ def generate_review():
     
     content = None
     max_retries = 4
-    delay = 10  # شروع انتظار با ۱۰ ثانیه
+    delay = 10
 
     for attempt in range(1, max_retries + 1):
         try:
+            # استفاده از مدل دقیق و معتبر gemini-3.6-flash
             response = client.models.generate_content(
-                model='gemini-2.5-flash',
+                model='gemini-3.6-flash',
                 contents=prompt
             )
             content = response.text.strip()
@@ -62,7 +63,7 @@ def generate_review():
             if attempt < max_retries:
                 print(f"Waiting {delay} seconds before retrying...")
                 time.sleep(delay)
-                delay *= 2  # دو برابر کردن زمان انتظار در هر تلاش
+                delay *= 2
             else:
                 print("All retries exhausted.")
                 raise e
