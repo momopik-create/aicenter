@@ -11,6 +11,9 @@ TOOLS_LIST = [
     "GrammarlyGO", "Surfer SEO", "Make.com", "Zapier Central"
 ]
 
+# لیست مدل‌ها به ترتیب اولویت
+MODELS_TO_TRY = ['gemini-3.6-flash', 'gemini-1.5-flash']
+
 def generate_review():
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
@@ -31,7 +34,7 @@ def generate_review():
        description: "A concise 1-2 sentence summary of {selected_tool}."
        rating: 4.8
        date: "{date_str}"
-       pricing_tier: "Paid" or "Freemium" or "Free Trial"
+       pricing_tier: "Paid"
     3. The article content MUST include:
        - **Executive Summary**: Brief overview with key takeaways.
        - **Pros & Cons**: Use clear Markdown lists with green checkmarks (✅) and red crosses (❌).
@@ -42,34 +45,27 @@ def generate_review():
     Do NOT include extra markdown fences outside the output. Return content starting with ---.
     """
 
-    print(f"Generating review for {selected_tool} with Gemini...")
-    
     content = None
-    max_retries = 4
-    delay = 10
-
-    for attempt in range(1, max_retries + 1):
-        try:
-            # استفاده از مدل دقیق و معتبر gemini-3.6-flash
-            response = client.models.generate_content(
-                model='gemini-3.6-flash',
-                contents=prompt
-            )
-            content = response.text.strip()
-            print("Successfully received response from Gemini API.")
+    
+    for model_name in MODELS_TO_TRY:
+        print(f"Attempting to generate review using {model_name}...")
+        for attempt in range(1, 3):
+            try:
+                response = client.models.generate_content(
+                    model=model_name,
+                    contents=prompt
+                )
+                content = response.text.strip()
+                print(f"Successfully generated review with {model_name}.")
+                break
+            except Exception as e:
+                print(f"Attempt {attempt} with {model_name} failed: {e}")
+                time.sleep(5)
+        if content:
             break
-        except Exception as e:
-            print(f"Attempt {attempt} failed with error: {e}")
-            if attempt < max_retries:
-                print(f"Waiting {delay} seconds before retrying...")
-                time.sleep(delay)
-                delay *= 2
-            else:
-                print("All retries exhausted.")
-                raise e
 
     if not content:
-        raise ValueError("Failed to generate content: empty response.")
+        raise ValueError("Failed to generate content: all models were unavailable.")
 
     # پاک‌سازی قالب خروجی
     if content.startswith("```markdown"):
@@ -86,7 +82,7 @@ def generate_review():
     with open(file_path, "w", encoding="utf-8") as f:
         f.write(content)
         
-    print(f"Successfully generated review at: {file_path}")
+    print(f"Successfully saved review at: {file_path}")
 
 if __name__ == "__main__":
     generate_review()
