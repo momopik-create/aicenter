@@ -1,9 +1,17 @@
 ---
 import { getCollection } from 'astro:content';
+import affiliateLinks from '../../affiliates.json';
 
 export async function getStaticPaths() {
   const products = await getCollection('products');
-  return products.map(product => ({
+  
+  // فقط صفحاتی ساخته می‌شوند که کلید آنها در affiliates.json موجود باشد
+  const activeProducts = products.filter(product => {
+    const key = product.slug.toLowerCase();
+    return Object.keys(affiliateLinks).some(aKey => aKey !== 'default' && key.includes(aKey.toLowerCase()));
+  });
+
+  return activeProducts.map(product => ({
     params: { slug: product.slug },
     props: { product },
   }));
@@ -12,6 +20,7 @@ export async function getStaticPaths() {
 const { product } = Astro.props;
 const { Content } = await product.render();
 const redirectUrl = `/go/${product.slug}`;
+---
 
 // ساخت اسکیما استاندارد Google Review Schema (JSON-LD) برای نمایش ستاره در نتایج گوگل
 const reviewSchema = {
