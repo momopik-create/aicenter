@@ -1,14 +1,13 @@
 ---
 import { getCollection } from 'astro:content';
-import affiliateLinks from '/affiliates.json?raw';
+import affiliateLinks from '../../affiliates.json';
 
 const allProducts = await getCollection('products');
-const parsedAffiliates = JSON.parse(affiliateLinks);
 
-// فیلتر کردن مقالات صفحه اصلی
+// فیلتر کردن مقالات
 const activeProducts = allProducts.filter(product => {
   const key = product.slug.toLowerCase();
-  return Object.keys(parsedAffiliates).some(aKey => aKey !== 'default' && key.includes(aKey.toLowerCase()));
+  return Object.keys(affiliateLinks).some(aKey => aKey !== 'default' && key.includes(aKey.toLowerCase()));
 });
 ---
 
