@@ -40,6 +40,8 @@ const reviewSchema = {
     }
   }
 };
+
+const jsonLdString = JSON.stringify(reviewSchema);
 ---
 
 <html lang="en">
@@ -49,13 +51,13 @@ const reviewSchema = {
     <meta name="description" content={product.data.description} />
     <meta name="viewport" content="width=device-width" />
     
-    <!-- Open Graph برای شبکه‌های اجتماعی -->
+    <!-- Open Graph for Social Media -->
     <meta property="og:title" content={product.data.title} />
     <meta property="og:description" content={product.data.description} />
     <meta property="og:type" content="article" />
 
     <!-- Google Review Schema -->
-    <script type="application/ld+json" set:html={JSON.stringify(reviewSchema)} />
+    <script type="application/ld+json" set:html={jsonLdString}></script>
 
     <style>
       body { font-family: system-ui, sans-serif; max-width: 750px; margin: 0 auto; padding: 2rem; background: #0f172a; color: #f8fafc; line-height: 1.6; }
