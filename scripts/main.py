@@ -4,9 +4,10 @@ import random
 import datetime
 import time
 from google import genai
+from google.genai.errors import APIError
 
 def get_active_affiliate_tools():
-    """فقط ابزارهایی را برمی‌گرداند که لینک واقعی آنها در affiliates.json ثبت شده است"""
+    """فقط ابزارهایی را برمی‌گرداند که لینک واقعی آن‌ها در affiliates.json ثبت شده است"""
     json_path = "affiliates.json"
     if not os.path.exists(json_path):
         raise FileNotFoundError("affiliates.json not found!")
@@ -14,7 +15,6 @@ def get_active_affiliate_tools():
     with open(json_path, "r", encoding="utf-8") as f:
         data = json.load(f)
         
-    # حذف لینک default و استخراج تمام کلیدهای فعال واقعی
     active_tools = [key for key in data.keys() if key != "default"]
     return active_tools
 
@@ -30,7 +30,6 @@ def generate_review():
         return
 
     client = genai.Client(api_key=api_key)
-    # انتخاب تصادفی فقط از بین ابزارهای فعال واقعی
     selected_tool = random.choice(tools_list)
     date_str = datetime.datetime.now().strftime("%Y-%m-%d")
     slug = selected_tool.lower().replace(" ", "-").replace(".", "")
@@ -56,12 +55,13 @@ def generate_review():
     Do NOT include extra markdown fences outside the output. Return content starting with ---.
     """
 
+    # ابتدا مدل سریع‌تر و کم‌مصرف‌تر Flash، سپس Pro
     models_to_try = ['gemini-3.6-flash', 'gemini-3.1-pro-preview']
     content = None
     
     for model_name in models_to_try:
-        print(f"Attempting to generate review for active tool '{selected_tool}' using {model_name}...")
-        for attempt in range(1, 4):
+        print(f"Attempting generation for '{selected_tool}' using {model_name}...")
+        for attempt in range(1, 5):
             try:
                 response = client.models.generate_content(
                     model=model_name,
@@ -71,13 +71,16 @@ def generate_review():
                 print(f"Successfully generated review with {model_name}.")
                 break
             except Exception as e:
-                print(f"Attempt {attempt} with {model_name} failed: {e}")
-                time.sleep(15)
+                # افزایش زمان انتظار بین تلاش‌ها برای رفع محدودیت Quota
+                wait_time = attempt * 20
+                print(f"Attempt {attempt} with {model_name} failed due to quota/rate limits or error: {e}")
+                print(f"Waiting {wait_time} seconds before retrying...")
+                time.sleep(wait_time)
         if content:
             break
 
     if not content:
-        raise ValueError("Failed to generate content: all active models were unavailable.")
+        raise ValueError("Failed to generate content: Rate limits exceeded or all active models unavailable.")
 
     if content.startswith("```markdown"):
         content = content[11:]
