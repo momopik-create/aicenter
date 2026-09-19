@@ -1,0 +1,39 @@
+---
+import fs from 'node:fs';
+import path from 'node:path';
+
+export function getStaticPaths() {
+  const filePath = path.resolve(process.cwd(), 'affiliates.json');
+  let affiliateLinks: Record<string, string> = {};
+
+  if (fs.existsSync(filePath)) {
+    try {
+      affiliateLinks = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+    } catch {
+      affiliateLinks = {};
+    }
+  }
+
+  const paths = Object.keys(affiliateLinks).map((slug) => ({
+    params: { slug },
+    props: { targetUrl: affiliateLinks[slug] },
+  }));
+
+  return paths;
+}
+
+const { targetUrl } = Astro.props;
+const defaultUrl = 'https://google.com';
+const finalUrl = targetUrl || defaultUrl;
+---
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="refresh" content={`0;url=${finalUrl}`} />
+    <link rel="canonical" href={finalUrl} />
+  </head>
+  <body>
+    <p>Redirecting to <a href={finalUrl}>{finalUrl}</a>...</p>
+  </body>
+</html>
