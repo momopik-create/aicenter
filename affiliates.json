@@ -1,6 +1,6 @@
 {
-  "default": "https://www.vultr.com/?ref=9923873",
-  "chatgpt": "https://partner.openai.com/ref=YOUR_ID",
+  "vultr": "https://www.vultr.com/?ref=9923873",
+  "serverspace": "https://serverspace.io/ref/917000",
   "midjourney": "https://midjourney.com/?via=YOUR_ID",
   "claude": "https://anthropic.com/?ref=YOUR_ID",
   "jasper": "https://jasper.ai?fpr=YOUR_ID",
