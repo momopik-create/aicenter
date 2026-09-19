@@ -1,10 +1,20 @@
 ---
 import { getCollection } from 'astro:content';
-import affiliateLinks from '../../affiliates.json';
+import fs from 'node:fs';
+import path from 'node:path';
+
+// خواندن مستقیم فایل از ریشه پروژه بدون وابستگی به importهای Vite
+const filePath = path.resolve(process.cwd(), 'affiliates.json');
+let affiliateLinks = {};
+
+if (fs.existsSync(filePath)) {
+  const fileData = fs.readFileSync(filePath, 'utf-8');
+  affiliateLinks = JSON.parse(fileData);
+}
 
 const allProducts = await getCollection('products');
 
-// فیلتر کردن مقالات
+// فیلتر کردن مقالات صفحه اصلی
 const activeProducts = allProducts.filter(product => {
   const key = product.slug.toLowerCase();
   return Object.keys(affiliateLinks).some(aKey => aKey !== 'default' && key.includes(aKey.toLowerCase()));
