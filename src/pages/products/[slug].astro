@@ -18,18 +18,20 @@ export async function getStaticPaths() {
 
 const { product } = Astro.props;
 const { Content } = await product.render();
+
 const redirectUrl = `/go/${product.slug}`;
+const cleanTitle = product.data.title.split(' Review')[0] || product.data.title;
 
 const reviewSchema = {
   "@context": "https://schema.org/",
   "@type": "Product",
-  "name": product.data.title.split(' Review')[0],
+  "name": cleanTitle,
   "description": product.data.description,
   "review": {
     "@type": "Review",
     "reviewRating": {
       "@type": "Rating",
-      "ratingValue": product.data.rating,
+      "ratingValue": String(product.data.rating),
       "bestRating": "5"
     },
     "author": {
@@ -52,7 +54,8 @@ const reviewSchema = {
     <meta property="og:description" content={product.data.description} />
     <meta property="og:type" content="article" />
 
-    <script type="application/ld+json" set:html={JSON.stringify(reviewSchema)} />
+    <!-- تگ اسکریپت با بسته شدن استاندارد (حل کننده خطای Vite) -->
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(reviewSchema)}></script>
 
     <style>
       body { font-family: system-ui, sans-serif; max-width: 750px; margin: 0 auto; padding: 2rem; background: #0f172a; color: #f8fafc; line-height: 1.6; }
@@ -70,11 +73,11 @@ const reviewSchema = {
     <div class="meta">
       <span>Rating: ⭐ {product.data.rating}/5</span>
       <span>Published: {product.data.date}</span>
-      {product.data.pricing_tier && <span>Tier: {product.data.pricing_tier}</span>}
+      <span>Pricing: {product.data.pricing_tier || 'Paid'}</span>
     </div>
 
     <a href={redirectUrl} target="_blank" rel="noopener noreferrer" class="cta-btn">
-      Try {product.data.title.split(' ')[0]} Now →
+      Try {cleanTitle} Now →
     </a>
 
     <div class="content">
