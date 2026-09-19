@@ -5,7 +5,6 @@ import affiliateLinks from '../../../affiliates.json';
 export async function getStaticPaths() {
   const products = await getCollection('products');
   
-  // فقط صفحاتی ساخته می‌شوند که کلید آن‌ها در affiliates.json موجود باشد
   const activeProducts = products.filter(product => {
     const key = product.slug.toLowerCase();
     return Object.keys(affiliateLinks).some(aKey => aKey !== 'default' && key.includes(aKey.toLowerCase()));
@@ -21,7 +20,6 @@ const { product } = Astro.props;
 const { Content } = await product.render();
 const redirectUrl = `/go/${product.slug}`;
 
-// ساخت اسکیما استاندارد Google Review Schema (JSON-LD)
 const reviewSchema = {
   "@context": "https://schema.org/",
   "@type": "Product",
@@ -40,10 +38,9 @@ const reviewSchema = {
     }
   }
 };
-
-const jsonLdString = JSON.stringify(reviewSchema);
 ---
 
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -51,13 +48,11 @@ const jsonLdString = JSON.stringify(reviewSchema);
     <meta name="description" content={product.data.description} />
     <meta name="viewport" content="width=device-width" />
     
-    <!-- Open Graph for Social Media -->
     <meta property="og:title" content={product.data.title} />
     <meta property="og:description" content={product.data.description} />
     <meta property="og:type" content="article" />
 
-    <!-- Google Review Schema -->
-    <script type="application/ld+json" set:html={jsonLdString}></script>
+    <script type="application/ld+json" set:html={JSON.stringify(reviewSchema)} />
 
     <style>
       body { font-family: system-ui, sans-serif; max-width: 750px; margin: 0 auto; padding: 2rem; background: #0f172a; color: #f8fafc; line-height: 1.6; }
