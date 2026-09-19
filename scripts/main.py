@@ -1,36 +1,47 @@
 import os
+import json
 import random
 import datetime
 import time
 from google import genai
 
-TOOLS_LIST = [
-    "ChatGPT Plus", "Midjourney v6", "Claude 3.5 Sonnet", "Jasper AI", 
-    "Copy.ai", "Descript", "Runway Gen-2", "ElevenLabs", "Perplexity AI",
-    "GitHub Copilot", "Canva Magic Studio", "Notion AI", "Synthesia",
-    "GrammarlyGO", "Surfer SEO", "Make.com", "Zapier Central"
-]
-
-# استفاده دقیق از مدل‌های معتبر طبق آخرین متدهای پشتیبانی‌شده توسط گوگل
-MODELS_TO_TRY = ['gemini-3.6-flash', 'gemini-3.1-pro-preview']
+def get_active_affiliate_tools():
+    """فقط ابزارهایی را برمی‌گرداند که لینک واقعی آنها در affiliates.json ثبت شده است"""
+    json_path = "affiliates.json"
+    if not os.path.exists(json_path):
+        raise FileNotFoundError("affiliates.json not found!")
+        
+    with open(json_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+        
+    # حذف لینک default و استخراج تمام کلیدهای فعال واقعی
+    active_tools = [key for key in data.keys() if key != "default"]
+    return active_tools
 
 def generate_review():
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
         raise ValueError("GEMINI_API_KEY environment variable is missing!")
 
+    tools_list = get_active_affiliate_tools()
+    
+    if not tools_list:
+        print("No active affiliate tools found in affiliates.json. Skipping generation.")
+        return
+
     client = genai.Client(api_key=api_key)
-    selected_tool = random.choice(TOOLS_LIST)
+    # انتخاب تصادفی فقط از بین ابزارهای فعال واقعی
+    selected_tool = random.choice(tools_list)
     date_str = datetime.datetime.now().strftime("%Y-%m-%d")
     slug = selected_tool.lower().replace(" ", "-").replace(".", "")
 
     prompt = f"""
-    You are an expert tech reviewer and affiliate marketer. Write a comprehensive, SEO-optimized, highly engaging review for the AI tool: "{selected_tool}".
+    You are an expert tech reviewer and affiliate marketer. Write a comprehensive, SEO-optimized, highly engaging review for the AI tool or platform: "{selected_tool}".
     
     CRITICAL INSTRUCTIONS:
     1. Output strictly valid Markdown with YAML frontmatter at the top.
     2. Frontmatter fields must include:
-       title: "{selected_tool} Review (2026): Features, Pricing & Alternatives"
+       title: "{selected_tool.title()} Review (2026): Features, Pricing & Alternatives"
        description: "A concise 1-2 sentence summary of {selected_tool}."
        rating: 4.8
        date: "{date_str}"
@@ -45,10 +56,11 @@ def generate_review():
     Do NOT include extra markdown fences outside the output. Return content starting with ---.
     """
 
+    models_to_try = ['gemini-3.6-flash', 'gemini-3.1-pro-preview']
     content = None
     
-    for model_name in MODELS_TO_TRY:
-        print(f"Attempting to generate review using {model_name}...")
+    for model_name in models_to_try:
+        print(f"Attempting to generate review for active tool '{selected_tool}' using {model_name}...")
         for attempt in range(1, 4):
             try:
                 response = client.models.generate_content(
@@ -60,14 +72,13 @@ def generate_review():
                 break
             except Exception as e:
                 print(f"Attempt {attempt} with {model_name} failed: {e}")
-                time.sleep(15)  # افزایش زمان انتظار به ۱۵ ثانیه برای رد کردن محدودیت ترافیکی (503)
+                time.sleep(15)
         if content:
             break
 
     if not content:
         raise ValueError("Failed to generate content: all active models were unavailable.")
 
-    # پاک‌سازی قالب خروجی
     if content.startswith("```markdown"):
         content = content[11:]
     if content.startswith("```"):
