@@ -54,8 +54,8 @@ def generate_review():
     Do NOT include extra markdown fences outside the output. Return content starting with ---.
     """
 
-    # نام مدل استاندارد و فعال در SDK جدید genai
-    model_name = 'gemini-2.0-flash'
+    # به‌روزرسانی مدل به gemini-3.6-flash طبق اعلام رسمی گوگل
+    model_name = 'gemini-3.6-flash'
     content = None
     
     print(f"Attempting generation for '{selected_tool}' using {model_name}...")
@@ -75,7 +75,7 @@ def generate_review():
             time.sleep(wait_time)
 
     if not content:
-        raise ValueError("Failed to generate content using gemini-2.0-flash.")
+        raise ValueError(f"Failed to generate content using {model_name}.")
 
     if content.startswith("```markdown"):
         content = content[11:]
