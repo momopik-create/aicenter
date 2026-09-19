@@ -1,5 +1,5 @@
-import type { APIRoute } from 'astro';
-import affiliateLinks from '../../../affiliates.json';
+import type { APIRoute } from "astro";
+import affiliateLinks from "../../../affiliates.json";
 
 export const GET: APIRoute = ({ params, redirect }) => {
   const slug = params.slug || 'default';
