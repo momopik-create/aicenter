@@ -1,4 +1,4 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import List, Optional
 
 
@@ -6,15 +6,11 @@ from typing import List, Optional
 class SearchResult:
     title: str
     url: str
-    snippet: str = ""
-    source: str = ""
-    published_at: Optional[str] = None
-    score: Optional[float] = None
+    content: str = ""
 
 
 @dataclass
 class SearchResponse:
-    query: str
-    results: List[SearchResult] = field(default_factory=list)
-    success: bool = True
+    success: bool
+    results: List[SearchResult]
     error: Optional[str] = None
