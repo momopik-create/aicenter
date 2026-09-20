@@ -3,6 +3,7 @@ from dataclasses import dataclass
 
 import requests
 
+from .search_models import SearchResponse, SearchResult
 
 
 @dataclass
@@ -13,7 +14,7 @@ class TavilyConfig:
 
 class TavilyProvider:
     name = "tavily"
-    version = "0.2.0"
+    version = "0.3.0"
 
     def __init__(self, config: TavilyConfig):
         self.config = config
@@ -64,17 +65,15 @@ class TavilyProvider:
 
             data = response.json()
 
-            results = []
-
-            for item in data.get("results", []):
-                results.append(
-                    SearchResult(
-                        title=item.get("title", ""),
-                        url=item.get("url", ""),
-                        snippet=item.get("content", ""),
-                        source="tavily",
-                    )
+            results = [
+                SearchResult(
+                    title=item.get("title", ""),
+                    url=item.get("url", ""),
+                    snippet=item.get("content", ""),
+                    source="tavily",
                 )
+                for item in data.get("results", [])
+            ]
 
             return SearchResponse(
                 query=query,
