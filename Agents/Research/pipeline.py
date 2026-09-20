@@ -1,24 +1,30 @@
+from Agents.Decision.agent import DecisionAgent
+
 from .agent import ResearchAgent
 from .input import ResearchInput
 from .output import ResearchOutput
 from .schema import ResearchStatus
-from .source import ResearchSource
-from .tools.web_search import WebSearchTool
-from .tools.web_fetch import WebFetchTool
 from .tools.source_validator import SourceValidator
+from .tools.web_fetch import WebFetchTool
+from .tools.web_search import WebSearchTool
 
 
 class ResearchPipeline:
     name = "research_pipeline"
-    version = "0.2.0"
+    version = "0.3.0"
 
     def __init__(self):
         self.agent = ResearchAgent()
+        self.decision_agent = DecisionAgent()
         self.search_tool = WebSearchTool()
         self.fetch_tool = WebFetchTool()
         self.source_validator = SourceValidator()
 
-    def run(self, research_input: ResearchInput) -> ResearchOutput:
+    def run(
+        self,
+        research_input: ResearchInput,
+    ) -> ResearchOutput:
+
         try:
             result = self.agent.run(
                 product_name=research_input.product_name,
@@ -48,14 +54,21 @@ class ResearchPipeline:
                 if not validation.valid:
                     continue
 
-                source = ResearchSource(
-                    url=search_result.url,
-                    title=search_result.title,
-                    source_type=validation.source_type,
-                    checked_at=None,
-                )
+                source = {
+                    "url": search_result.url,
+                    "title": search_result.title,
+                    "source_type": validation.source_type,
+                }
 
                 result.sources.append(source)
+
+            decision = self.decision_agent.decide(
+                state="research_sources",
+                questions={
+                    "product_name": research_input.product_name,
+                    "source_count": len(result.sources),
+                },
+            )
 
             result.status = ResearchStatus.COMPLETED
 
