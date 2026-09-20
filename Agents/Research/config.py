@@ -1,2 +1,10 @@
 AGENT_NAME = "research"
 AGENT_VERSION = "0.1.0"
+
+# Agent behavior
+MAX_SOURCES = 10
+REQUIRE_SOURCES = True
+ALLOW_UNVERIFIED_CLAIMS = False
+
+# Output
+DEFAULT_STATUS = "pending"
