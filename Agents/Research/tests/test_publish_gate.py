@@ -5,6 +5,7 @@ from Agents.Research.schema import (
     ResearchResult,
     ResearchStatus,
 )
+from Agents.Research.source import ResearchSource
 
 
 PRODUCT_NAME = "publish_gate_test"
@@ -15,11 +16,18 @@ def main():
     review = ResearchReview()
     gate = PublishGate()
 
+    source = ResearchSource(
+        url="https://example.com",
+        title="Example",
+        source_type="website",
+        checked_at=None,
+    )
+
     result = ResearchResult(
         product_name=PRODUCT_NAME,
         url="https://example.com",
         status=ResearchStatus.COMPLETED,
-        sources=[],
+        sources=[source],
     )
 
     file_path = store.save(result)
@@ -46,7 +54,7 @@ def main():
 
     if not gate.can_publish(PRODUCT_NAME):
         raise RuntimeError(
-            "Publish Gate rejected an approved item."
+            "Publish Gate rejected a valid approved item."
         )
 
     review.reject(
