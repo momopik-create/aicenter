@@ -1,7 +1,8 @@
 from dataclasses import dataclass
+from typing import Optional
 
 
 @dataclass
 class ResearchInput:
     product_name: str
-    product_url: str
+    url: Optional[str] = None
