@@ -2,12 +2,12 @@ import json
 from dataclasses import asdict
 from pathlib import Path
 
-from .schema import ReviewStatus
+from Agents.Contracts.research import ReviewStatus
 
 
 class ReviewStore:
     name = "review_store"
-    version = "0.2.0"
+    version = "1.0.0"
 
     def __init__(self):
         self.directory = (
@@ -25,7 +25,8 @@ class ReviewStore:
         )
 
         file_path = (
-            self.directory / f"{file_name}.json"
+            self.directory
+            / f"{file_name}.json"
         )
 
         data = asdict(result)
@@ -35,7 +36,7 @@ class ReviewStore:
                 data,
                 ensure_ascii=False,
                 indent=2,
-                default=str,
+                default=self._serialize,
             ),
             encoding="utf-8",
         )
@@ -53,7 +54,8 @@ class ReviewStore:
         )
 
         file_path = (
-            self.directory / f"{file_name}.json"
+            self.directory
+            / f"{file_name}.json"
         )
 
         if not file_path.exists():
@@ -80,6 +82,13 @@ class ReviewStore:
         )
 
         return file_path
+
+    @staticmethod
+    def _serialize(value):
+        if hasattr(value, "value"):
+            return value.value
+
+        return str(value)
 
     @staticmethod
     def _safe_filename(name: str) -> str:
