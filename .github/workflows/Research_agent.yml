@@ -1,0 +1,30 @@
+name: Research Agent
+
+on:
+  workflow_dispatch:
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+
+    env:
+      TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+      SEARCH_PROVIDER: ${{ secrets.SEARCH_PROVIDER }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r Requirements.txt
+
+      - name: Run Research Agent
+        run: |
+          python -c "from Agents.Research.tools.web_search import WebSearchTool; print('Research Agent environment is ready')"
