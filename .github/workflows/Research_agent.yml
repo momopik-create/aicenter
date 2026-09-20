@@ -47,3 +47,7 @@ jobs:
       - name: Test Review Queue
         run: |
           python Agents/Research/tests/test_review_queue.py
+          
+      - name: Test Publish Gate
+        run: |
+          python Agents/Research/tests/test_publish_gate.py
