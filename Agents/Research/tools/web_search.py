@@ -1,21 +1,5 @@
-from dataclasses import dataclass
-from typing import List
-
+from .search_models import SearchResponse
 from .tavily_provider import TavilyProvider
-
-
-@dataclass
-class SearchResult:
-    title: str
-    url: str
-    content: str = ""
-
-
-@dataclass
-class SearchResponse:
-    success: bool
-    results: List[SearchResult]
-    error: str | None = None
 
 
 class WebSearchTool:
