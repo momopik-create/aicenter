@@ -3,16 +3,17 @@ from Agents.Decision.agent import DecisionAgent
 from .agent import ResearchAgent
 from .input import ResearchInput
 from .output import ResearchOutput
+from .review_store import ReviewStore
 from .schema import ResearchStatus
 from .source import ResearchSource
 from .tools.source_validator import SourceValidator
 from .tools.web_fetch import WebFetchTool
 from .tools.web_search import WebSearchTool
-from .review_store import ReviewStore
+
 
 class ResearchPipeline:
     name = "research_pipeline"
-    version = "0.4.0"
+    version = "0.5.0"
 
     def __init__(self):
         self.agent = ResearchAgent()
@@ -20,6 +21,7 @@ class ResearchPipeline:
         self.search_tool = WebSearchTool()
         self.fetch_tool = WebFetchTool()
         self.source_validator = SourceValidator()
+        self.review_store = ReviewStore()
 
     def run(
         self,
@@ -84,5 +86,6 @@ class ResearchPipeline:
         except Exception as error:
             return ResearchOutput(
                 success=False,
+                result=None,
                 error=str(error),
             )
