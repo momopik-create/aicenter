@@ -5,27 +5,29 @@ from Agents.Research.review_store import ReviewStore
 from Agents.Research.schema import ResearchResult, ResearchStatus
 
 
+PRODUCT_NAME = "review_test_product"
+
+
 def main():
     store = ReviewStore()
 
     result = ResearchResult(
-        product_name="__review_test__",
+        product_name=PRODUCT_NAME,
         url="https://example.com",
         status=ResearchStatus.COMPLETED,
         sources=[],
     )
 
-    store.save(result)
+    file_path = store.save(result)
+
+    print("Review file:")
+    print(file_path)
 
     review = ResearchReview()
 
     review.approve(
-        "__review_test__",
+        PRODUCT_NAME,
         note="Test approval",
-    )
-
-    file_path = (
-        store.directory / "__review_test__.json"
     )
 
     data = json.loads(
@@ -34,6 +36,7 @@ def main():
         )
     )
 
+    print()
     print("After approval:")
     print("Status:", data["review_status"])
     print("Note:", data["review_note"])
@@ -44,7 +47,7 @@ def main():
         )
 
     review.reject(
-        "__review_test__",
+        PRODUCT_NAME,
         note="Test rejection",
     )
 
