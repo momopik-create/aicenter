@@ -3,6 +3,7 @@ from Agents.Contracts.research import (
     ResearchStatus,
     SourceEvidence,
 )
+from Agents.Contracts.research_input import ResearchInput
 
 from .agent import ResearchAgent
 from .config import ResearchConfig
@@ -18,27 +19,24 @@ class ResearchPipeline:
 
     def __init__(self):
         self.agent = ResearchAgent()
-
         self.search_tool = WebSearchTool()
         self.fetch_tool = WebFetchTool()
         self.validator = SourceValidator()
-
         self.store = ReviewStore()
 
     def run(
         self,
-        product_name: str,
-        url: str,
+        research_input: ResearchInput,
     ) -> ResearchPackage:
 
         package = self.agent.run(
-            product_name=product_name,
-            url=url,
+            product_name=research_input.product_name,
+            url=research_input.product_url,
         )
 
         try:
             search = self.search_tool.search(
-                query=product_name,
+                query=research_input.product_name,
                 max_results=(
                     ResearchConfig.MAX_SEARCH_RESULTS
                 ),
@@ -50,7 +48,6 @@ class ResearchPipeline:
                 return package
 
             for item in search.results:
-
                 validation = self.validator.validate(
                     item.url
                 )
@@ -62,9 +59,7 @@ class ResearchPipeline:
                     SourceEvidence(
                         url=item.url,
                         title=item.title,
-                        source_type=(
-                            validation.source_type
-                        ),
+                        source_type=validation.source_type,
                         excerpt=item.content,
                     )
                 )
