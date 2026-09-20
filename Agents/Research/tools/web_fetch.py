@@ -6,50 +6,45 @@ import requests
 
 @dataclass
 class FetchResult:
+    success: bool
     url: str
-    content: str
-    title: str = ""
-    success: bool = True
+    content: str = ""
+    status_code: Optional[int] = None
     error: Optional[str] = None
 
 
 class WebFetchTool:
     name = "web_fetch"
-    version = "0.2.0"
+    version = "1.0.0"
 
-    def fetch(self, url: str) -> FetchResult:
-        if not url or not url.strip():
-            return FetchResult(
-                url=url,
-                content="",
-                success=False,
-                error="URL is empty.",
-            )
+    def fetch(
+        self,
+        url: str,
+        timeout: int = 20,
+    ) -> FetchResult:
 
         try:
             response = requests.get(
                 url,
-                timeout=20,
+                timeout=timeout,
                 headers={
                     "User-Agent": (
                         "Mozilla/5.0 "
-                        "(compatible; MomopikResearchBot/1.0)"
+                        "MomopikResearchBot/1.0"
                     )
                 },
             )
 
-            response.raise_for_status()
-
             return FetchResult(
+                success=response.ok,
                 url=url,
                 content=response.text,
-                success=True,
+                status_code=response.status_code,
             )
 
-        except requests.RequestException as error:
+        except Exception as error:
             return FetchResult(
-                url=url,
-                content="",
                 success=False,
+                url=url,
                 error=str(error),
             )
