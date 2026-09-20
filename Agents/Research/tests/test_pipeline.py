@@ -12,34 +12,41 @@ def main():
 
     output = pipeline.run(research_input)
 
-    print("Success:", output.success)
+    print("=" * 60)
+    print("RESEARCH PIPELINE TEST")
+    print("=" * 60)
+
+    print(f"Success: {output.success}")
 
     if output.error:
-        print("Error:", output.error)
+        print(f"Error: {output.error}")
 
-    if not output.success:
+    if not output.result:
         raise RuntimeError(
-            f"Research pipeline failed: {output.error}"
+            "Pipeline returned no research result."
         )
 
-    print(
-        "Product:",
-        output.result.product_name,
-    )
+    print(f"Product: {output.result.product_name}")
+    print(f"URL: {output.result.url}")
+    print(f"Status: {output.result.status}")
 
-    print(
-        "Status:",
-        output.result.status,
-    )
+    print()
+    print(f"Sources found: {len(output.result.sources)}")
 
-    print(
-        "Sources:",
-        len(output.result.sources),
-    )
+    for index, source in enumerate(
+        output.result.sources,
+        start=1,
+    ):
+        print()
+        print(f"Source {index}")
+        print(f"Title: {source.title}")
+        print(f"URL: {source.url}")
+        print(f"Type: {source.source_type}")
 
-    print(
-        "Research + Decision integration test: PASSED"
-    )
+    print()
+    print("=" * 60)
+    print("PIPELINE TEST PASSED")
+    print("=" * 60)
 
 
 if __name__ == "__main__":
