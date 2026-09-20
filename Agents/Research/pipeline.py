@@ -74,6 +74,8 @@ class ResearchPipeline:
 
             result.status = ResearchStatus.COMPLETED
 
+            self.review_store.save(result)
+
             return ResearchOutput(
                 success=True,
                 result=result,
