@@ -3,7 +3,10 @@ from typing import List
 
 from tavily import TavilyClient
 
-from .web_search import SearchResponse, SearchResult
+from .search_models import (
+    SearchResponse,
+    SearchResult,
+)
 
 
 class TavilyProvider:
