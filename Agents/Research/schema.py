@@ -6,5 +6,12 @@ from typing import List
 class ResearchResult:
     product_name: str
     url: str
-    summary: str = ""
+
+    description: str = ""
+    features: List[str] = field(default_factory=list)
+    pros: List[str] = field(default_factory=list)
+    cons: List[str] = field(default_factory=list)
+
     sources: List[str] = field(default_factory=list)
+
+    status: str = "pending"
