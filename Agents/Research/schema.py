@@ -3,6 +3,7 @@ from enum import Enum
 from typing import List
 
 from .claim import ResearchClaim
+from .source import ResearchSource
 
 
 class ResearchStatus(Enum):
@@ -24,6 +25,6 @@ class ResearchResult:
     cons: List[str] = field(default_factory=list)
 
     claims: List[ResearchClaim] = field(default_factory=list)
-    sources: List[str] = field(default_factory=list)
+    sources: List[ResearchSource] = field(default_factory=list)
 
     status: ResearchStatus = ResearchStatus.PENDING
