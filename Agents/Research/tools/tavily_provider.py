@@ -1,6 +1,7 @@
 import os
 from dataclasses import dataclass
-from typing import List, Optional
+
+import requests
 
 from .web_search import SearchResult, SearchResponse
 
@@ -13,7 +14,7 @@ class TavilyConfig:
 
 class TavilyProvider:
     name = "tavily"
-    version = "0.1.0"
+    version = "0.2.0"
 
     def __init__(self, config: TavilyConfig):
         self.config = config
@@ -38,6 +39,7 @@ class TavilyProvider:
         query: str,
         max_results: int = 10,
     ) -> SearchResponse:
+
         if not query.strip():
             return SearchResponse(
                 query=query,
@@ -45,10 +47,46 @@ class TavilyProvider:
                 error="Search query is empty.",
             )
 
-        # API request will be implemented in the next step.
-        return SearchResponse(
-            query=query,
-            results=[],
-            success=False,
-            error="Tavily API request is not implemented yet.",
-        )
+        payload = {
+            "api_key": self.config.api_key,
+            "query": query,
+            "max_results": max_results,
+            "search_depth": "basic",
+        }
+
+        try:
+            response = requests.post(
+                self.config.base_url,
+                json=payload,
+                timeout=30,
+            )
+
+            response.raise_for_status()
+
+            data = response.json()
+
+            results = []
+
+            for item in data.get("results", []):
+                results.append(
+                    SearchResult(
+                        title=item.get("title", ""),
+                        url=item.get("url", ""),
+                        snippet=item.get("content", ""),
+                        source="tavily",
+                    )
+                )
+
+            return SearchResponse(
+                query=query,
+                results=results,
+                success=True,
+            )
+
+        except requests.RequestException as error:
+            return SearchResponse(
+                query=query,
+                results=[],
+                success=False,
+                error=str(error),
+            )
