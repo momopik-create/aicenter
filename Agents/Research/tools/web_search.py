@@ -1,6 +1,8 @@
 from dataclasses import dataclass, field
 from typing import List, Optional
 
+from .tavily_provider import TavilyProvider
+
 
 @dataclass
 class SearchResult:
@@ -22,18 +24,16 @@ class SearchResponse:
 
 class WebSearchTool:
     name = "web_search"
-    version = "0.2.0"
+    version = "0.3.0"
+
+    def __init__(self, provider=None):
+        self.provider = provider or TavilyProvider.from_environment()
 
     def search(
         self,
         query: str,
         max_results: int = 10,
     ) -> SearchResponse:
-        """
-        Search the web for reliable information.
-
-        The actual search provider will be connected later.
-        """
 
         if not query.strip():
             return SearchResponse(
@@ -42,9 +42,7 @@ class WebSearchTool:
                 error="Search query is empty.",
             )
 
-        return SearchResponse(
+        return self.provider.search(
             query=query,
-            results=[],
-            success=False,
-            error="Search provider is not configured.",
+            max_results=max_results,
         )
