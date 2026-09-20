@@ -1,37 +1,25 @@
 import os
-from dataclasses import dataclass
+from typing import List
 
-import requests
+from tavily import TavilyClient
 
-from .search_models import SearchResponse, SearchResult
-
-
-@dataclass
-class TavilyConfig:
-    api_key: str
-    base_url: str = "https://api.tavily.com/search"
+from .web_search import SearchResponse, SearchResult
 
 
 class TavilyProvider:
     name = "tavily"
-    version = "0.3.0"
+    version = "1.0.0"
 
-    def __init__(self, config: TavilyConfig):
-        self.config = config
-
-    @classmethod
-    def from_environment(cls):
+    def __init__(self):
         api_key = os.getenv("TAVILY_API_KEY")
 
         if not api_key:
-            raise ValueError(
-                "TAVILY_API_KEY environment variable is not configured."
+            raise RuntimeError(
+                "TAVILY_API_KEY is not configured."
             )
 
-        return cls(
-            TavilyConfig(
-                api_key=api_key,
-            )
+        self.client = TavilyClient(
+            api_key=api_key
         )
 
     def search(
@@ -40,51 +28,43 @@ class TavilyProvider:
         max_results: int = 10,
     ) -> SearchResponse:
 
-        if not query.strip():
-            return SearchResponse(
-                query=query,
-                success=False,
-                error="Search query is empty.",
-            )
-
-        payload = {
-            "api_key": self.config.api_key,
-            "query": query,
-            "max_results": max_results,
-            "search_depth": "basic",
-        }
-
         try:
-            response = requests.post(
-                self.config.base_url,
-                json=payload,
-                timeout=30,
+            response = self.client.search(
+                query=query,
+                max_results=max_results,
             )
 
-            response.raise_for_status()
+            results: List[SearchResult] = []
 
-            data = response.json()
-
-            results = [
-                SearchResult(
-                    title=item.get("title", ""),
-                    url=item.get("url", ""),
-                    snippet=item.get("content", ""),
-                    source="tavily",
+            for item in response.get(
+                "results",
+                [],
+            ):
+                results.append(
+                    SearchResult(
+                        title=item.get(
+                            "title",
+                            "",
+                        ),
+                        url=item.get(
+                            "url",
+                            "",
+                        ),
+                        content=item.get(
+                            "content",
+                            "",
+                        ),
+                    )
                 )
-                for item in data.get("results", [])
-            ]
 
             return SearchResponse(
-                query=query,
-                results=results,
                 success=True,
+                results=results,
             )
 
-        except requests.RequestException as error:
+        except Exception as error:
             return SearchResponse(
-                query=query,
-                results=[],
                 success=False,
+                results=[],
                 error=str(error),
             )
