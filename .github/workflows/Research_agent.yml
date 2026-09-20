@@ -10,6 +10,7 @@ jobs:
     env:
       TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
       SEARCH_PROVIDER: ${{ secrets.SEARCH_PROVIDER }}
+      PYTHONPATH: ${{ github.workspace }}
 
     steps:
       - name: Checkout repository
