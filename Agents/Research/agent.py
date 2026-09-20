@@ -7,10 +7,11 @@ class ResearchAgent:
 
     def run(self, product_name: str, url: str) -> ResearchResult:
         """
-        Run research for a product.
+        Create a research result for a product.
 
-        This version only prepares the research task.
-        It does not access the web or publish anything.
+        The agent does not publish anything.
+        Actual research is performed by the Research Pipeline
+        and its tools.
         """
 
         return ResearchResult(
