@@ -1,13 +1,13 @@
+from .provider_factory import SearchProviderFactory
 from .search_models import SearchResponse
-from .tavily_provider import TavilyProvider
 
 
 class WebSearchTool:
     name = "web_search"
-    version = "0.3.0"
+    version = "0.4.0"
 
     def __init__(self, provider=None):
-        self.provider = provider or TavilyProvider.from_environment()
+        self.provider = provider or SearchProviderFactory.create()
 
     def search(
         self,
