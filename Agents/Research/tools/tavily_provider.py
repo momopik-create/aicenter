@@ -61,12 +61,14 @@ class TavilyProvider:
                 )
 
             return SearchResponse(
+                query=query,
                 success=True,
                 results=results,
             )
 
         except Exception as error:
             return SearchResponse(
+                query=query,
                 success=False,
                 results=[],
                 error=str(error),
