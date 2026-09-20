@@ -5,8 +5,7 @@ from typing import Optional
 @dataclass
 class ResearchSource:
     url: str
-    title: str = ""
-    source_type: str = "unknown"
-    publisher: str = ""
-    published_at: Optional[str] = None
-    checked_at: Optional[str] = None
+    title: str
+    source_type: str
+    excerpt: Optional[str] = None
+    reliability_score: Optional[float] = None
