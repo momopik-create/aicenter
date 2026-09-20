@@ -8,7 +8,7 @@ from .source import ResearchSource
 from .tools.source_validator import SourceValidator
 from .tools.web_fetch import WebFetchTool
 from .tools.web_search import WebSearchTool
-
+from .review_store import ReviewStore
 
 class ResearchPipeline:
     name = "research_pipeline"
