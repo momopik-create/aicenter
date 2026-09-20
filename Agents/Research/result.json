@@ -1,0 +1,18 @@
+{
+  "agent": "research",
+  "version": "0.1.0",
+  "status": "pending",
+  "product": {
+    "name": "",
+    "url": ""
+  },
+  "research": {
+    "description": "",
+    "features": [],
+    "pros": [],
+    "cons": []
+  },
+  "sources": [],
+  "created_at": null,
+  "updated_at": null
+}
