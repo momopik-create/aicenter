@@ -3,7 +3,6 @@ from dataclasses import dataclass
 
 import requests
 
-from .web_search import SearchResult, SearchResponse
 
 
 @dataclass
