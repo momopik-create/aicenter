@@ -1,10 +1,27 @@
-AGENT_NAME = "research"
-AGENT_VERSION = "0.1.0"
+import os
 
-# Agent behavior
-MAX_SOURCES = 10
-REQUIRE_SOURCES = True
-ALLOW_UNVERIFIED_CLAIMS = False
 
-# Output
-DEFAULT_STATUS = "pending"
+class ResearchConfig:
+    name = "research_config"
+    version = "1.0.0"
+
+    MAX_SEARCH_RESULTS = int(
+        os.getenv(
+            "RESEARCH_MAX_SEARCH_RESULTS",
+            "10",
+        )
+    )
+
+    REQUEST_TIMEOUT = int(
+        os.getenv(
+            "RESEARCH_REQUEST_TIMEOUT",
+            "20",
+        )
+    )
+
+    MIN_SOURCES = int(
+        os.getenv(
+            "RESEARCH_MIN_SOURCES",
+            "3",
+        )
+    )
