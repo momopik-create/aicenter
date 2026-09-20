@@ -1,5 +1,6 @@
 from .content import ContentPackage, ContentStatus
 from .decision import DecisionResult, DecisionStatus
+from .research_input import ResearchInput
 from .factcheck import (
     ClaimCheck,
     FactCheckResult,
