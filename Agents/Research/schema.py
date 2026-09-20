@@ -2,6 +2,8 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import List
 
+from .claim import ResearchClaim
+
 
 class ResearchStatus(Enum):
     PENDING = "pending"
@@ -21,6 +23,7 @@ class ResearchResult:
     pros: List[str] = field(default_factory=list)
     cons: List[str] = field(default_factory=list)
 
+    claims: List[ResearchClaim] = field(default_factory=list)
     sources: List[str] = field(default_factory=list)
 
     status: ResearchStatus = ResearchStatus.PENDING
