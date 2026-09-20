@@ -33,3 +33,7 @@ jobs:
       - name: Test Decision Agent
         run: |
           python Agents/Decision/tests/test_decision.py
+          
+      - name: Test Research Pipeline
+        run: |
+          python Agents/Research/tests/test_pipeline.py
