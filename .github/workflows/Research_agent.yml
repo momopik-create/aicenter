@@ -39,3 +39,7 @@ jobs:
       - name: Test Research Pipeline
         run: |
           python Agents/Research/tests/test_pipeline.py
+          
+      - name: Test Research Review
+        run: |
+          python Agents/Research/tests/test_review.py
