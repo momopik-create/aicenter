@@ -10,6 +10,8 @@ jobs:
     env:
       TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
       SEARCH_PROVIDER: ${{ secrets.SEARCH_PROVIDER }}
+      DECISION_PROVIDER: disabled
+      JEV_ENABLED: false
       PYTHONPATH: ${{ github.workspace }}
 
     steps:
@@ -29,11 +31,11 @@ jobs:
       - name: Test Tavily Search
         run: |
           python Agents/Research/tests/test_tavily.py
-          
+
       - name: Test Decision Agent
         run: |
           python Agents/Decision/tests/test_decision.py
-          
+
       - name: Test Research Pipeline
         run: |
           python Agents/Research/tests/test_pipeline.py
