@@ -31,7 +31,7 @@ class ResearchPipeline:
 
         package = self.agent.run(
             product_name=research_input.product_name,
-            url=research_input.product_url,
+            url=research_input.url,
         )
 
         try:
