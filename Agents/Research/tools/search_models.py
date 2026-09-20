@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import List, Optional
 
 
@@ -11,6 +11,9 @@ class SearchResult:
 
 @dataclass
 class SearchResponse:
+    query: str
     success: bool
-    results: List[SearchResult]
+    results: List[SearchResult] = field(
+        default_factory=list
+    )
     error: Optional[str] = None
