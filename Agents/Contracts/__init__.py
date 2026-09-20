@@ -36,4 +36,5 @@ __all__ = [
     "PublishRequest",
     "PublishResult",
     "PublishStatus",
+    "ResearchInput",
 ]
