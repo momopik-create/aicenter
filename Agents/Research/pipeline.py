@@ -2,6 +2,7 @@ from .agent import ResearchAgent
 from .input import ResearchInput
 from .output import ResearchOutput
 from .schema import ResearchStatus
+from .source import ResearchSource
 from .tools.web_search import WebSearchTool
 from .tools.web_fetch import WebFetchTool
 from .tools.source_validator import SourceValidator
@@ -9,7 +10,7 @@ from .tools.source_validator import SourceValidator
 
 class ResearchPipeline:
     name = "research_pipeline"
-    version = "0.1.0"
+    version = "0.2.0"
 
     def __init__(self):
         self.agent = ResearchAgent()
@@ -24,11 +25,22 @@ class ResearchPipeline:
                 url=research_input.url,
             )
 
-            search_results = self.search_tool.search(
-                research_input.product_name
+            search_response = self.search_tool.search(
+                research_input.product_name,
+                max_results=10,
             )
 
-            for search_result in search_results:
+            if not search_response.success:
+                result.status = ResearchStatus.FAILED
+
+                return ResearchOutput(
+                    success=False,
+                    result=result,
+                    error=search_response.error,
+                )
+
+            for search_result in search_response.results:
+
                 validation = self.source_validator.validate(
                     search_result.url
                 )
@@ -36,12 +48,14 @@ class ResearchPipeline:
                 if not validation.valid:
                     continue
 
-                fetched = self.fetch_tool.fetch(
-                    search_result.url
+                source = ResearchSource(
+                    url=search_result.url,
+                    title=search_result.title,
+                    source_type=validation.source_type,
+                    checked_at=None,
                 )
 
-                if not fetched.success:
-                    continue
+                result.sources.append(source)
 
             result.status = ResearchStatus.COMPLETED
 
