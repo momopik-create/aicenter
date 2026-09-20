@@ -43,3 +43,7 @@ jobs:
       - name: Test Research Review
         run: |
           python Agents/Research/tests/test_review.py
+          
+      - name: Test Review Queue
+        run: |
+          python Agents/Research/tests/test_review_queue.py
