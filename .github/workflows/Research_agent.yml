@@ -29,3 +29,6 @@ jobs:
       - name: Test Tavily Search
         run: |
           python Agents/Research/tests/test_tavily.py
+      - name: Test Decision Agent
+        run: |
+          python Agents/Decision/tests/test_decision.py
