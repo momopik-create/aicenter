@@ -51,3 +51,28 @@ jobs:
       - name: Test Publish Gate
         run: |
           python Agents/Research/tests/test_publish_gate.py
+      - name: Research Audit
+if: always()
+run: |
+    echo "=== RESEARCH FILES ==="
+    find Agents/Research -maxdepth 3 -type f | sort
+
+    echo
+    echo "=== RESEARCH CONTRACT ==="
+    sed -n '1,260p' Agents/Contracts/research.py
+
+    echo
+    echo "=== REVIEW ==="
+    sed -n '1,300p' Agents/Research/review.py
+
+    echo
+    echo "=== REVIEW STORE ==="
+    sed -n '1,300p' Agents/Research/review_store.py
+
+    echo
+    echo "=== PUBLISH GATE ==="
+    sed -n '1,300p' Agents/Research/publish_gate.py
+
+    echo
+    echo "=== PUBLISH GATE TEST ==="
+    sed -n '1,180p' Agents/Research/tests/test_publish_gate.py
