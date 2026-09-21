@@ -60,42 +60,82 @@ jobs:
           echo "============================================================"
 
           echo
-          echo "=== research.py ==="
-          sed -n '1,260p' Agents/Contracts/research.py
+          echo "=== FILES ==="
+          find Agents/Research -maxdepth 2 -type f | sort
 
           echo
-          echo "=== review.py ==="
-          sed -n '1,260p' Agents/Research/review.py
+          echo "=== REVIEW JSON ==="
+
+          if [ -d Agents/Research/reviews ]; then
+            for file in Agents/Research/reviews/*.json; do
+              if [ -f "$file" ]; then
+                echo "FILE: $file"
+
+                python - "$file" <<'PY'
+          import json
+          import sys
+
+          path = sys.argv[1]
+
+          with open(path, "r", encoding="utf-8") as f:
+              data = json.load(f)
+
+          print("product_name:", data.get("product_name"))
+          print("product_url:", data.get("product_url"))
+          print("status:", data.get("status"))
+          print("review_status:", data.get("review_status"))
+          print("review_note:", data.get("review_note"))
+          print("sources_count:", len(data.get("sources", [])))
+          PY
+              fi
+            done
+          else
+            echo "Reviews directory does not exist."
+          fi
 
           echo
-          echo "=== review_store.py ==="
-          sed -n '1,300p' Agents/Research/review_store.py
+          echo "=== PUBLISH GATE DIRECT CHECK ==="
 
-          echo
-          echo "=== publish_gate.py ==="
-          sed -n '1,260p' Agents/Research/publish_gate.py
+          python - <<'PY'
+          from Agents.Research.publish_gate import PublishGate
+          from Agents.Research.review_store import ReviewStore
 
-          echo
-          echo "=== test_publish_gate.py ==="
-          sed -n '1,160p' Agents/Research/tests/test_publish_gate.py
+          product = "publish_gate_test"
 
-          echo
-          echo "=== REVIEW JSON FILES ==="
-          find Agents/Research/reviews \
-            -maxdepth 1 \
-            -type f \
-            -name "*.json" \
-            -print 2>/dev/null || true
+          store = ReviewStore()
+          gate = PublishGate()
 
-          echo
-          echo "=== TEST REVIEW JSON ==="
+          path = store.directory / f"{store._safe_filename(product)}.json"
 
-          for file in Agents/Research/reviews/*.json; do
-            if [ -f "$file" ]; then
-              echo "--- $file ---"
-              cat "$file"
-            fi
-          done
+          print("review_file_exists:", path.exists())
+          print("can_publish:", gate.can_publish(product))
+
+          if path.exists():
+              import json
+
+              data = json.loads(
+                  path.read_text(encoding="utf-8")
+              )
+
+              print("stored_status:", data.get("status"))
+              print(
+                  "stored_review_status:",
+                  data.get("review_status"),
+              )
+              print(
+                  "stored_product_url:",
+                  bool(data.get("product_url")),
+              )
+              print(
+                  "stored_sources:",
+                  len(data.get("sources", [])),
+              )
+
+          if path.exists():
+              path.unlink()
+
+          print("temporary_test_file_removed: True")
+          PY
 
           echo
           echo "============================================================"
