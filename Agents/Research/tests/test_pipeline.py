@@ -1,40 +1,43 @@
-from Agents.Research.input import ResearchInput
+from Agents.Contracts.research import ResearchStatus
+from Agents.Contracts.research_input import ResearchInput
 from Agents.Research.pipeline import ResearchPipeline
 
 
+PRODUCT_NAME = "ChatGPT"
+PRODUCT_URL = "https://chatgpt.com"
+
+
 def main():
+    print("=" * 60)
+    print("RESEARCH PIPELINE TEST")
+    print("=" * 60)
+
     research_input = ResearchInput(
-        product_name="ChatGPT",
-        url="https://chatgpt.com",
+        product_name=PRODUCT_NAME,
+        url=PRODUCT_URL,
     )
 
     pipeline = ResearchPipeline()
 
     output = pipeline.run(research_input)
 
-    print("=" * 60)
-    print("RESEARCH PIPELINE TEST")
-    print("=" * 60)
+    print(f"Product: {output.product_name}")
+    print(f"URL: {output.product_url}")
+    print(f"Status: {output.status}")
+    print(f"Sources found: {len(output.sources)}")
 
-    print(f"Success: {output.success}")
-
-    if output.error:
-        print(f"Error: {output.error}")
-
-    if not output.result:
+    if output.status != ResearchStatus.COMPLETED:
         raise RuntimeError(
-            "Pipeline returned no research result."
+            "Research pipeline did not complete successfully."
         )
 
-    print(f"Product: {output.result.product_name}")
-    print(f"URL: {output.result.url}")
-    print(f"Status: {output.result.status}")
-
-    print()
-    print(f"Sources found: {len(output.result.sources)}")
+    if not output.sources:
+        raise RuntimeError(
+            "Research pipeline returned no sources."
+        )
 
     for index, source in enumerate(
-        output.result.sources,
+        output.sources,
         start=1,
     ):
         print()
@@ -45,7 +48,7 @@ def main():
 
     print()
     print("=" * 60)
-    print("PIPELINE TEST PASSED")
+    print("RESEARCH PIPELINE TEST: PASSED")
     print("=" * 60)
 
 
