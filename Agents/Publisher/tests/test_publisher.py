@@ -130,10 +130,10 @@ def main():
             "Duplicate publish was incorrectly marked as published."
         )
     # ---------------------------------------------------------
-    # 4. Cleanup
+    # 5. Cleanup
     # ---------------------------------------------------------
 
-    print("\n[4/4] Cleaning up")
+    print("\n[5/5] Cleaning up")
 
     if test_file.exists():
         test_file.unlink()
