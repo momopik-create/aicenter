@@ -51,6 +51,10 @@ jobs:
       - name: Test Publish Gate
         run: |
           python Agents/Research/tests/test_publish_gate.py
+          
+      - name: Test Research End-to-End
+        run: |
+          python Agents/Research/tests/test_end_to_end.py
 
       - name: Research Audit
         if: always()
