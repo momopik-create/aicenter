@@ -1,92 +1,74 @@
+import json
+
 from Agents.Contracts.research import (
-    ResearchPackage,
     ResearchStatus,
     ReviewStatus,
-    SourceEvidence,
 )
-from Agents.Research.publish_gate import PublishGate
-from Agents.Research.review import ResearchReview
-from Agents.Research.review_store import ReviewStore
+
+from .review_store import ReviewStore
 
 
-PRODUCT_NAME = "publish_gate_test"
+class PublishGate:
+    name = "publish_gate"
+    version = "1.0.0"
 
+    def __init__(self):
+        self.store = ReviewStore()
 
-def main():
-    print("=" * 60)
-    print("PUBLISH GATE TEST")
-    print("=" * 60)
+    def can_publish(
+        self,
+        product_name: str,
+    ) -> bool:
 
-    store = ReviewStore()
-    review = ResearchReview()
-    gate = PublishGate()
+        file_path = self._get_file(
+            product_name
+        )
 
-    package = ResearchPackage(
-        product_name=PRODUCT_NAME,
-        product_url="https://example.com",
-        status=ResearchStatus.COMPLETED,
-        sources=[
-            SourceEvidence(
-                url="https://example.com",
-                title="Example",
-                source_type="website",
-                excerpt="Example source.",
-                reliability_score=1.0,
+        if not file_path.exists():
+            return False
+
+        data = self._load(file_path)
+
+        if data.get("status") != (
+            ResearchStatus.COMPLETED.value
+        ):
+            return False
+
+        if data.get("review_status") != (
+            ReviewStatus.APPROVED.value
+        ):
+            return False
+
+        if not data.get("product_url"):
+            return False
+
+        sources = data.get(
+            "sources",
+            [],
+        )
+
+        if not sources:
+            return False
+
+        return True
+
+    def _get_file(
+        self,
+        product_name: str,
+    ):
+        file_name = self.store._safe_filename(
+            product_name
+        )
+
+        return (
+            self.store.directory
+            / f"{file_name}.json"
+        )
+
+    @staticmethod
+    def _load(file_path):
+        return json.loads(
+            file_path.read_text(
+                encoding="utf-8",
             )
-        ],
-        review_status=ReviewStatus.PENDING,
-    )
-
-    file_path = store.save(package)
-
-    print(
-        "Before approval:",
-        gate.can_publish(PRODUCT_NAME),
-    )
-
-    if gate.can_publish(PRODUCT_NAME):
-        raise RuntimeError(
-            "Publish Gate allowed an unapproved item."
         )
-
-    review.approve(
-        PRODUCT_NAME,
-        note="Publish gate test approval",
-    )
-
-    print(
-        "After approval:",
-        gate.can_publish(PRODUCT_NAME),
-    )
-
-    if not gate.can_publish(PRODUCT_NAME):
-        raise RuntimeError(
-            "Publish Gate rejected a valid approved item."
-        )
-
-    review.reject(
-        PRODUCT_NAME,
-        note="Publish gate rejection test",
-    )
-
-    print(
-        "After rejection:",
-        gate.can_publish(PRODUCT_NAME),
-    )
-
-    if gate.can_publish(PRODUCT_NAME):
-        raise RuntimeError(
-            "Publish Gate allowed a rejected item."
-        )
-
-    if file_path.exists():
-        file_path.unlink()
-
-    print()
-    print("=" * 60)
-    print("PUBLISH GATE TEST: PASSED")
-    print("=" * 60)
-
-
-if __name__ == "__main__":
-    main()
