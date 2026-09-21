@@ -1,4 +1,5 @@
 import json
+from datetime import datetime, timezone
 
 from Agents.Research.publish_gate import PublishGate
 
@@ -7,7 +8,7 @@ from .schema import PublishResult
 
 class PublisherAgent:
     name = "publisher"
-    version = "0.2.0"
+    version = "0.3.0"
 
     def __init__(self):
         self.gate = PublishGate()
@@ -49,7 +50,20 @@ class PublisherAgent:
                 error="Publish rejected by Publish Gate.",
             )
 
+        published_at = datetime.now(
+            timezone.utc
+        ).isoformat()
+
+        publication_id = (
+            f"{product_name.lower().replace(' ', '-')}"
+            f"-{int(datetime.now(timezone.utc).timestamp())}"
+        )
+
         data["published"] = True
+        data["published_at"] = published_at
+        data["publication_id"] = publication_id
+        data["publisher"] = self.name
+        data["publisher_version"] = self.version
 
         file_path.write_text(
             json.dumps(
@@ -64,4 +78,6 @@ class PublisherAgent:
             success=True,
             product_name=product_name,
             published=True,
+            publication_id=publication_id,
+            published_at=published_at,
         )
