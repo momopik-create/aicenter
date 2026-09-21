@@ -56,88 +56,34 @@ jobs:
         if: always()
         run: |
           echo "============================================================"
-          echo "RESEARCH AUDIT"
+          echo "PUBLISH GATE DIAGNOSTIC"
           echo "============================================================"
-
-          echo
-          echo "=== FILES ==="
-          find Agents/Research -maxdepth 2 -type f | sort
-
-          echo
-          echo "=== REVIEW JSON ==="
-
-          if [ -d Agents/Research/reviews ]; then
-            for file in Agents/Research/reviews/*.json; do
-              if [ -f "$file" ]; then
-                echo "FILE: $file"
-
-                python - "$file" <<'PY'
-          import json
-          import sys
-
-          path = sys.argv[1]
-
-          with open(path, "r", encoding="utf-8") as f:
-              data = json.load(f)
-
-          print("product_name:", data.get("product_name"))
-          print("product_url:", data.get("product_url"))
-          print("status:", data.get("status"))
-          print("review_status:", data.get("review_status"))
-          print("review_note:", data.get("review_note"))
-          print("sources_count:", len(data.get("sources", [])))
-          PY
-              fi
-            done
-          else
-            echo "Reviews directory does not exist."
-          fi
-
-          echo
-          echo "=== PUBLISH GATE DIRECT CHECK ==="
 
           python - <<'PY'
+          import inspect
+
           from Agents.Research.publish_gate import PublishGate
-          from Agents.Research.review_store import ReviewStore
 
-          product = "publish_gate_test"
+          print()
+          print("=== PublishGate.can_publish ===")
+          print()
 
-          store = ReviewStore()
-          gate = PublishGate()
-
-          path = store.directory / f"{store._safe_filename(product)}.json"
-
-          print("review_file_exists:", path.exists())
-          print("can_publish:", gate.can_publish(product))
-
-          if path.exists():
-              import json
-
-              data = json.loads(
-                  path.read_text(encoding="utf-8")
+          print(
+              inspect.getsource(
+                  PublishGate.can_publish
               )
+          )
 
-              print("stored_status:", data.get("status"))
-              print(
-                  "stored_review_status:",
-                  data.get("review_status"),
-              )
-              print(
-                  "stored_product_url:",
-                  bool(data.get("product_url")),
-              )
-              print(
-                  "stored_sources:",
-                  len(data.get("sources", [])),
-              )
+          print()
+          print("=== PublishGate methods ===")
+          print()
 
-          if path.exists():
-              path.unlink()
+          for name in dir(PublishGate):
+              if not name.startswith("_"):
+                  print(name)
 
-          print("temporary_test_file_removed: True")
+          print()
+          print("============================================================")
+          print("DIAGNOSTIC COMPLETE")
+          print("============================================================")
           PY
-
-          echo
-          echo "============================================================"
-          echo "AUDIT COMPLETE"
-          echo "============================================================"
