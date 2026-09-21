@@ -1,12 +1,15 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 from typing import Any
-import json
 
-from .review import ReviewStatus
+from Agents.Contracts.research import (
+    ResearchStatus,
+    ReviewStatus,
+)
+
 from .review_store import ReviewStore
-from .schema import ResearchStatus
 
 
 class PublishGate:
@@ -21,20 +24,35 @@ class PublishGate:
     - at least one research source exists
     """
 
-    def __init__(self, store: ReviewStore | None = None) -> None:
+    def __init__(
+        self,
+        store: ReviewStore | None = None,
+    ) -> None:
         self.store = store or ReviewStore()
 
-    def _get_file(self, product_name: str) -> Path:
+    def _get_file(
+        self,
+        product_name: str,
+    ) -> Path:
         return (
             self.store.directory
             / f"{self.store._safe_filename(product_name)}.json"
         )
 
-    def _load(self, file_path: Path) -> dict[str, Any]:
-        with file_path.open("r", encoding="utf-8") as f:
+    def _load(
+        self,
+        file_path: Path,
+    ) -> dict[str, Any]:
+        with file_path.open(
+            "r",
+            encoding="utf-8",
+        ) as f:
             return json.load(f)
 
-    def can_publish(self, product_name: str) -> bool:
+    def can_publish(
+        self,
+        product_name: str,
+    ) -> bool:
         file_path = self._get_file(product_name)
 
         # 1. A review record must exist.
@@ -58,7 +76,6 @@ class PublishGate:
             return False
 
         # 4. Product URL is mandatory.
-        # The canonical field in Research is "product_url".
         if not data.get("product_url"):
             return False
 
