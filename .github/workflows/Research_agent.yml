@@ -55,35 +55,22 @@ jobs:
       - name: Research Audit
         if: always()
         run: |
-          echo "============================================================"
-          echo "PUBLISH GATE DIAGNOSTIC"
-          echo "============================================================"
-
           python - <<'PY'
           import inspect
-
           from Agents.Research.publish_gate import PublishGate
 
-          print()
-          print("=== PublishGate.can_publish ===")
-          print()
+          source = inspect.getsource(PublishGate.can_publish)
 
-          print(
-              inspect.getsource(
-                  PublishGate.can_publish
-              )
-          )
+          with open(
+              "/tmp/publish_gate_source.txt",
+              "w",
+              encoding="utf-8"
+          ) as f:
+              f.write(source)
 
-          print()
-          print("=== PublishGate methods ===")
-          print()
-
-          for name in dir(PublishGate):
-              if not name.startswith("_"):
-                  print(name)
-
-          print()
           print("============================================================")
-          print("DIAGNOSTIC COMPLETE")
+          print("PUBLISH GATE FUNCTION")
+          print("============================================================")
+          print(source)
           print("============================================================")
           PY
