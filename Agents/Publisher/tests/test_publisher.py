@@ -93,6 +93,57 @@ def main():
     if not result.success:
         raise RuntimeError(
             "Publisher rejected a valid approved item."
+    # ---------------------------------------------------------
+    # 4. Verify publication metadata
+    # ---------------------------------------------------------
+
+    print("\n[4/5] Verifying publication metadata")
+
+    stored_data = json.loads(
+        test_file.read_text(
+            encoding="utf-8"
+        )
+    )
+
+    print(
+        "Published:",
+        stored_data.get("published"),
+    )
+
+    print(
+        "Publication ID:",
+        stored_data.get("publication_id"),
+    )
+
+    print(
+        "Published at:",
+        stored_data.get("published_at"),
+    )
+
+    print(
+        "Publisher:",
+        stored_data.get("publisher"),
+    )
+
+    if stored_data.get("published") is not True:
+        raise RuntimeError(
+            "Published flag was not stored correctly."
+        )
+
+    if not stored_data.get("publication_id"):
+        raise RuntimeError(
+            "Publication ID was not stored."
+        )
+
+    if not stored_data.get("published_at"):
+        raise RuntimeError(
+            "Published timestamp was not stored."
+        )
+
+    if stored_data.get("publisher") != "publisher":
+        raise RuntimeError(
+            "Publisher name was not stored correctly."
+        )
         )
 
     if not result.published:
@@ -100,10 +151,10 @@ def main():
             "Publisher did not mark approved item as published."
         )
     # ---------------------------------------------------------
-    # 4. Verify duplicate publishing is blocked
+    # 5. Verify duplicate publishing is blocked
     # ---------------------------------------------------------
 
-    print("\n[4/5] Testing duplicate publish protection")
+    print("\n[5/6] Testing duplicate publish protection")
 
     duplicate_result = agent.publish(product_name)
 
@@ -130,10 +181,10 @@ def main():
             "Duplicate publish was incorrectly marked as published."
         )
     # ---------------------------------------------------------
-    # 5. Cleanup
+    # 6. Cleanup
     # ---------------------------------------------------------
 
-    print("\n[5/5] Cleaning up")
+    print("\n[6/6] Cleaning up")
 
     if test_file.exists():
         test_file.unlink()
