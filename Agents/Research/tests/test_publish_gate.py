@@ -1,36 +1,43 @@
+from Agents.Contracts.research import (
+    ResearchPackage,
+    ResearchStatus,
+    ReviewStatus,
+    SourceEvidence,
+)
 from Agents.Research.publish_gate import PublishGate
 from Agents.Research.review import ResearchReview
 from Agents.Research.review_store import ReviewStore
-from Agents.Research.schema import (
-    ResearchResult,
-    ResearchStatus,
-)
-from Agents.Research.source import ResearchSource
 
 
 PRODUCT_NAME = "publish_gate_test"
 
 
 def main():
+    print("=" * 60)
+    print("PUBLISH GATE TEST")
+    print("=" * 60)
+
     store = ReviewStore()
     review = ResearchReview()
     gate = PublishGate()
 
-    source = ResearchSource(
-        url="https://example.com",
-        title="Example",
-        source_type="website",
-        checked_at=None,
-    )
-
-    result = ResearchResult(
+    package = ResearchPackage(
         product_name=PRODUCT_NAME,
-        url="https://example.com",
+        product_url="https://example.com",
         status=ResearchStatus.COMPLETED,
-        sources=[source],
+        sources=[
+            SourceEvidence(
+                url="https://example.com",
+                title="Example",
+                source_type="website",
+                excerpt="Example source.",
+                reliability_score=1.0,
+            )
+        ],
+        review_status=ReviewStatus.PENDING,
     )
 
-    file_path = store.save(result)
+    file_path = store.save(package)
 
     print(
         "Before approval:",
@@ -72,10 +79,13 @@ def main():
             "Publish Gate allowed a rejected item."
         )
 
-    file_path.unlink()
+    if file_path.exists():
+        file_path.unlink()
 
     print()
-    print("Publish Gate test: PASSED")
+    print("=" * 60)
+    print("PUBLISH GATE TEST: PASSED")
+    print("=" * 60)
 
 
 if __name__ == "__main__":
