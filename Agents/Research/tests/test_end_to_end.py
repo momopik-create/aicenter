@@ -2,7 +2,7 @@ from Agents.Research.pipeline import ResearchPipeline
 from Agents.Research.input import ResearchInput
 from Agents.Research.review_store import ReviewStore
 from Agents.Research.publish_gate import PublishGate
-from Agents.Research.review import ReviewStatus
+from Agents.Contracts.research import ReviewStatus
 
 
 def main():
@@ -17,27 +17,30 @@ def main():
     # 1. Create research input
     # ---------------------------------------------------------
 
+    print("\n[1/7] Creating research input")
+
     research_input = ResearchInput(
         product_name=product_name,
         url=product_url,
     )
 
-    print("\n[1/7] Research input created")
-    print(f"Product: {product_name}")
-    print(f"URL: {product_url}")
+    print(f"Product: {research_input.product_name}")
+    print(f"URL: {research_input.url}")
 
     # ---------------------------------------------------------
     # 2. Run research pipeline
     # ---------------------------------------------------------
 
-    pipeline = ResearchPipeline()
+    print("\n[2/7] Running research pipeline")
 
-    print("\n[2/7] Running research pipeline...")
+    pipeline = ResearchPipeline()
 
     result = pipeline.run(research_input)
 
     if result is None:
-        raise RuntimeError("Research pipeline returned no result.")
+        raise RuntimeError(
+            "Research pipeline returned no result."
+        )
 
     print("Research pipeline completed.")
     print(f"Result type: {type(result).__name__}")
@@ -48,50 +51,96 @@ def main():
 
     print("\n[3/7] Inspecting research result")
 
-    if hasattr(result, "status"):
-        print(f"Status: {result.status}")
+    if not hasattr(result, "product_name"):
+        raise RuntimeError(
+            "Research result has no product_name."
+        )
 
-    if hasattr(result, "product_name"):
-        print(f"Product: {result.product_name}")
+    if not hasattr(result, "status"):
+        raise RuntimeError(
+            "Research result has no status."
+        )
 
-    if hasattr(result, "sources"):
-        print(f"Sources: {len(result.sources)}")
+    if not hasattr(result, "sources"):
+        raise RuntimeError(
+            "Research result has no sources."
+        )
+
+    print(f"Product: {result.product_name}")
+    print(f"Status: {result.status}")
+    print(f"Sources: {len(result.sources)}")
+
+    if result.product_name != product_name:
+        raise RuntimeError(
+            "Research result product_name does not match input."
+        )
 
     # ---------------------------------------------------------
-    # 4. Store review
+    # 4. Save result to ReviewStore
     # ---------------------------------------------------------
 
-    print("\n[4/7] Saving review item")
+    print("\n[4/7] Saving research result")
 
     store = ReviewStore()
 
-    store.save(result)
+    file_path = store.save(result)
 
-    print("Review item saved.")
+    print(f"Review saved: {file_path}")
+
+    if not file_path.exists():
+        raise RuntimeError(
+            "ReviewStore did not create the review file."
+        )
 
     # ---------------------------------------------------------
-    # 5. Verify pending state
+    # 5. Verify stored review
     # ---------------------------------------------------------
 
-    print("\n[5/7] Checking initial review state")
+    print("\n[5/7] Verifying stored review")
 
-    pending_item = store.get(product_name)
+    import json
 
-    if pending_item is None:
-        raise RuntimeError("Review item was not saved.")
-
-    print(
-        "Review status:",
-        pending_item.get("review_status")
-        if isinstance(pending_item, dict)
-        else getattr(pending_item, "review_status", None),
+    data = json.loads(
+        file_path.read_text(
+            encoding="utf-8"
+        )
     )
 
+    print(
+        "Stored product:",
+        data.get("product_name"),
+    )
+
+    print(
+        "Stored status:",
+        data.get("status"),
+    )
+
+    print(
+        "Stored review status:",
+        data.get("review_status"),
+    )
+
+    print(
+        "Stored sources:",
+        len(data.get("sources", [])),
+    )
+
+    if data.get("product_name") != product_name:
+        raise RuntimeError(
+            "Stored product_name is incorrect."
+        )
+
+    if not data.get("sources"):
+        raise RuntimeError(
+            "Stored research contains no sources."
+        )
+
     # ---------------------------------------------------------
-    # 6. Approve item
+    # 6. Approve research
     # ---------------------------------------------------------
 
-    print("\n[6/7] Approving research item")
+    print("\n[6/7] Approving research")
 
     store.update_status(
         product_name,
@@ -99,7 +148,24 @@ def main():
         note="End-to-end test approval",
     )
 
-    print("Approval recorded.")
+    updated_data = json.loads(
+        file_path.read_text(
+            encoding="utf-8"
+        )
+    )
+
+    print(
+        "Updated review status:",
+        updated_data.get("review_status"),
+    )
+
+    if (
+        updated_data.get("review_status")
+        != ReviewStatus.APPROVED.value
+    ):
+        raise RuntimeError(
+            "Research approval was not stored correctly."
+        )
 
     # ---------------------------------------------------------
     # 7. Publish Gate
@@ -109,14 +175,18 @@ def main():
 
     gate = PublishGate(store)
 
-    can_publish = gate.can_publish(product_name)
+    can_publish = gate.can_publish(
+        product_name
+    )
 
-    print(f"Publish allowed: {can_publish}")
+    print(
+        f"Publish allowed: {can_publish}"
+    )
 
     if not can_publish:
         raise RuntimeError(
-            "End-to-end test failed: "
-            "Publish Gate rejected the approved research item."
+            "Publish Gate rejected a valid "
+            "approved research item."
         )
 
     print("\n" + "=" * 60)
