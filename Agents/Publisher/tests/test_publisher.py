@@ -99,7 +99,36 @@ def main():
         raise RuntimeError(
             "Publisher did not mark approved item as published."
         )
+    # ---------------------------------------------------------
+    # 4. Verify duplicate publishing is blocked
+    # ---------------------------------------------------------
 
+    print("\n[4/5] Testing duplicate publish protection")
+
+    duplicate_result = agent.publish(product_name)
+
+    print("Success:", duplicate_result.success)
+    print("Published:", duplicate_result.published)
+    print(
+        "Already published:",
+        duplicate_result.already_published,
+    )
+    print("Error:", duplicate_result.error)
+
+    if duplicate_result.success:
+        raise RuntimeError(
+            "Publisher allowed duplicate publishing."
+        )
+
+    if not duplicate_result.already_published:
+        raise RuntimeError(
+            "Publisher did not detect already published item."
+        )
+
+    if duplicate_result.published:
+        raise RuntimeError(
+            "Duplicate publish was incorrectly marked as published."
+        )
     # ---------------------------------------------------------
     # 4. Cleanup
     # ---------------------------------------------------------
