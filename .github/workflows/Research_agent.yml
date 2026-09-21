@@ -39,15 +39,85 @@ jobs:
       - name: Test Research Pipeline
         run: |
           python Agents/Research/tests/test_pipeline.py
-          
+
       - name: Test Research Review
         run: |
           python Agents/Research/tests/test_review.py
-          
+
       - name: Test Review Queue
         run: |
           python Agents/Research/tests/test_review_queue.py
-          
+
       - name: Test Publish Gate
         run: |
           python Agents/Research/tests/test_publish_gate.py
+
+      - name: Research Audit
+        if: always()
+        run: |
+          echo "============================================================"
+          echo "RESEARCH FILES"
+          echo "============================================================"
+
+          find Agents/Research -maxdepth 3 -type f | sort
+
+          echo
+          echo "============================================================"
+          echo "RESEARCH CONTRACT"
+          echo "============================================================"
+
+          sed -n '1,300p' Agents/Contracts/research.py
+
+          echo
+          echo "============================================================"
+          echo "REVIEW"
+          echo "============================================================"
+
+          sed -n '1,300p' Agents/Research/review.py
+
+          echo
+          echo "============================================================"
+          echo "REVIEW STORE"
+          echo "============================================================"
+
+          sed -n '1,300p' Agents/Research/review_store.py
+
+          echo
+          echo "============================================================"
+          echo "PUBLISH GATE"
+          echo "============================================================"
+
+          sed -n '1,300p' Agents/Research/publish_gate.py
+
+          echo
+          echo "============================================================"
+          echo "PUBLISH GATE TEST"
+          echo "============================================================"
+
+          sed -n '1,220p' Agents/Research/tests/test_publish_gate.py
+
+          echo
+          echo "============================================================"
+          echo "GENERATED REVIEW FILES"
+          echo "============================================================"
+
+          if [ -d Agents/Research/reviews ]; then
+            find Agents/Research/reviews -maxdepth 1 -type f -print
+
+            for file in Agents/Research/reviews/*.json; do
+              if [ -f "$file" ]; then
+                echo
+                echo "------------------------------------------------------------"
+                echo "FILE: $file"
+                echo "------------------------------------------------------------"
+                cat "$file"
+              fi
+            done
+          else
+            echo "No reviews directory found."
+          fi
+
+          echo
+          echo "============================================================"
+          echo "RESEARCH AUDIT COMPLETE"
+          echo "============================================================"
