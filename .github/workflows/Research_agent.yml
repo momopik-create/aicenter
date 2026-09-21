@@ -28,13 +28,21 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Test Tavily Search
-        run: |
-          python Agents/Research/tests/test_tavily.py
+      # ------------------------------------------------------
+      # Decision Agent
+      # ------------------------------------------------------
 
       - name: Test Decision Agent
         run: |
           python Agents/Decision/tests/test_decision.py
+
+      # ------------------------------------------------------
+      # Research Agent
+      # ------------------------------------------------------
+
+      - name: Test Tavily Search
+        run: |
+          python Agents/Research/tests/test_tavily.py
 
       - name: Test Research Pipeline
         run: |
@@ -51,30 +59,15 @@ jobs:
       - name: Test Publish Gate
         run: |
           python Agents/Research/tests/test_publish_gate.py
-          
+
       - name: Test Research End-to-End
         run: |
           python Agents/Research/tests/test_end_to_end.py
 
-      - name: Research Audit
-        if: always()
+      # ------------------------------------------------------
+      # Publisher Agent
+      # ------------------------------------------------------
+
+      - name: Test Publisher Agent
         run: |
-          python - <<'PY'
-          import inspect
-          from Agents.Research.publish_gate import PublishGate
-
-          source = inspect.getsource(PublishGate.can_publish)
-
-          with open(
-              "/tmp/publish_gate_source.txt",
-              "w",
-              encoding="utf-8"
-          ) as f:
-              f.write(source)
-
-          print("============================================================")
-          print("PUBLISH GATE FUNCTION")
-          print("============================================================")
-          print(source)
-          print("============================================================")
-          PY
+          python Agents/Publisher/tests/test_publisher.py
