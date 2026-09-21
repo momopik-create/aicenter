@@ -1,3 +1,5 @@
+import json
+
 from Agents.Publisher.agent import PublisherAgent
 from Agents.Research.review_store import ReviewStore
 from Agents.Contracts.research import ReviewStatus
@@ -17,7 +19,7 @@ def main():
     # 1. Create a valid research record
     # ---------------------------------------------------------
 
-    print("\n[1/4] Creating test research record")
+    print("\n[1/6] Creating test research record")
 
     test_file = store.directory / "publisher_test.json"
 
@@ -37,8 +39,6 @@ def main():
         "review_note": None,
     }
 
-    import json
-
     test_file.write_text(
         json.dumps(
             data,
@@ -54,7 +54,7 @@ def main():
     # 2. Verify pending research cannot be published
     # ---------------------------------------------------------
 
-    print("\n[2/4] Testing pending research")
+    print("\n[2/6] Testing pending research")
 
     result = agent.publish(product_name)
 
@@ -73,10 +73,10 @@ def main():
         )
 
     # ---------------------------------------------------------
-    # 3. Approve research
+    # 3. Approve research and publish
     # ---------------------------------------------------------
 
-    print("\n[3/4] Approving research")
+    print("\n[3/6] Approving research")
 
     store.update_status(
         product_name,
@@ -88,16 +88,35 @@ def main():
 
     print("Success:", result.success)
     print("Published:", result.published)
+    print("Publication ID:", result.publication_id)
+    print("Published at:", result.published_at)
     print("Error:", result.error)
 
     if not result.success:
         raise RuntimeError(
             "Publisher rejected a valid approved item."
+        )
+
+    if not result.published:
+        raise RuntimeError(
+            "Publisher did not mark approved item as published."
+        )
+
+    if not result.publication_id:
+        raise RuntimeError(
+            "Publisher did not return a publication ID."
+        )
+
+    if not result.published_at:
+        raise RuntimeError(
+            "Publisher did not return a publication timestamp."
+        )
+
     # ---------------------------------------------------------
     # 4. Verify publication metadata
     # ---------------------------------------------------------
 
-    print("\n[4/5] Verifying publication metadata")
+    print("\n[4/6] Verifying publication metadata")
 
     stored_data = json.loads(
         test_file.read_text(
@@ -106,22 +125,22 @@ def main():
     )
 
     print(
-        "Published:",
+        "Stored published:",
         stored_data.get("published"),
     )
 
     print(
-        "Publication ID:",
+        "Stored publication ID:",
         stored_data.get("publication_id"),
     )
 
     print(
-        "Published at:",
+        "Stored published at:",
         stored_data.get("published_at"),
     )
 
     print(
-        "Publisher:",
+        "Stored publisher:",
         stored_data.get("publisher"),
     )
 
@@ -144,12 +163,7 @@ def main():
         raise RuntimeError(
             "Publisher name was not stored correctly."
         )
-        )
 
-    if not result.published:
-        raise RuntimeError(
-            "Publisher did not mark approved item as published."
-        )
     # ---------------------------------------------------------
     # 5. Verify duplicate publishing is blocked
     # ---------------------------------------------------------
@@ -180,6 +194,7 @@ def main():
         raise RuntimeError(
             "Duplicate publish was incorrectly marked as published."
         )
+
     # ---------------------------------------------------------
     # 6. Cleanup
     # ---------------------------------------------------------
