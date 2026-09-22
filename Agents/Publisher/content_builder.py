@@ -8,7 +8,7 @@ from typing import Any
 
 class ContentBuilder:
     name = "content_builder"
-    version = "1.0.0"
+    version = "1.1.0"
 
     def __init__(
         self,
@@ -17,13 +17,12 @@ class ContentBuilder:
         if output_directory is None:
             output_directory = (
                 Path(__file__).resolve().parents[2]
-                / "Content"
-                / "Products"
+                / "src"
+                / "content"
+                / "products"
             )
 
-        self.output_directory = Path(
-            output_directory
-        )
+        self.output_directory = Path(output_directory)
 
         self.output_directory.mkdir(
             parents=True,
