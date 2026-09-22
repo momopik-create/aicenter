@@ -210,3 +210,7 @@ class PublisherAgent:
             publication_id=publication_id,
             published_at=published_at,
         )
+
+
+if __name__ == "__main__":
+    pass
