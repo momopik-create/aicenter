@@ -1,92 +1,145 @@
-import json
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
-from Agents.Publisher.content_publish import ContentPublisher
+from Agents.Contracts.research import (
+    ResearchPackage,
+    ResearchStatus,
+    ReviewStatus,
+    SourceEvidence,
+)
+from Agents.Publisher.content_builder import ContentBuilder
 
 
 def main():
     print("=" * 60)
-    print("CONTENT PUBLISH TEST")
+    print("CONTENT BUILDER TEST")
     print("=" * 60)
 
-    product_name = "publisher_content_test"
+    # ---------------------------------------------------------
+    # 1. Create temporary output directory
+    # ---------------------------------------------------------
 
-    print("\n[1/5] Creating test publisher")
+    print("\n[1/4] Preparing temporary output directory")
 
-    publisher = ContentPublisher()
+    with TemporaryDirectory() as temp_directory:
 
-    print("Publisher:", publisher.name)
-    print("Version:", publisher.version)
-
-    print("\n[2/5] Creating test content")
-
-    content = {
-        "title": "Publisher Content Test",
-        "description": "Temporary content generated for testing.",
-        "product_name": product_name,
-        "url": "https://example.com",
-    }
-
-    print("Content created.")
-
-    print("\n[3/5] Publishing content")
-
-    result = publisher.publish(
-        product_name=product_name,
-        content=content,
-    )
-
-    print("Success:", result.success)
-    print("Published:", result.published)
-    print("Publication ID:", result.publication_id)
-    print("Error:", result.error)
-
-    if not result.success:
-        raise RuntimeError(
-            "Content Publisher failed to publish valid content."
+        builder = ContentBuilder(
+            output_directory=temp_directory
         )
 
-    if not result.published:
-        raise RuntimeError(
-            "Content Publisher returned success but published=False."
+        # -----------------------------------------------------
+        # 2. Create research package
+        # -----------------------------------------------------
+
+        print("\n[2/4] Creating test research package")
+
+        research = ResearchPackage(
+            product_name="Publisher Content Test",
+            product_url="https://example.com",
+            status=ResearchStatus.COMPLETED,
+            facts=[
+                "A test product used to verify Astro content generation."
+            ],
+            pricing=[
+                {
+                    "name": "Pro",
+                    "price": "$19/month",
+                    "description": "Example paid plan",
+                }
+            ],
+            pros=[
+                "Easy to use",
+                "Useful for testing",
+            ],
+            cons=[
+                "Test data only",
+            ],
+            sources=[
+                SourceEvidence(
+                    url="https://example.com",
+                    title="Example Source",
+                    source_type="official",
+                    excerpt="Example evidence",
+                    reliability_score=1.0,
+                )
+            ],
+            review_status=ReviewStatus.APPROVED,
         )
 
-    print("\n[4/5] Verifying publication")
+        # -----------------------------------------------------
+        # 3. Build Astro Markdown
+        # -----------------------------------------------------
 
-    output_file = Path(
-        publisher.output_directory
-    ) / f"{product_name}.json"
+        print("\n[3/4] Building Astro content")
 
-    if not output_file.exists():
-        raise RuntimeError(
-            "Published content file was not created."
-        )
+        output_file = builder.build(research)
 
-    data = json.loads(
-        output_file.read_text(
+        print("Output file:", output_file)
+
+        if not output_file.exists():
+            raise RuntimeError(
+                "ContentBuilder did not create a Markdown file."
+            )
+
+        if output_file.name != "publisher-content-test.md":
+            raise RuntimeError(
+                "Generated slug/file name is incorrect."
+            )
+
+        content = output_file.read_text(
             encoding="utf-8"
         )
-    )
 
-    print("Stored title:", data.get("title"))
-    print("Stored product:", data.get("product_name"))
-    print("Stored published:", data.get("published"))
+        required_fields = [
+            "title:",
+            "description:",
+            "rating:",
+            "date:",
+            "pricing_tier:",
+        ]
 
-    if data.get("published") is not True:
-        raise RuntimeError(
-            "Stored content is not marked as published."
-        )
+        for field in required_fields:
+            if field not in content:
+                raise RuntimeError(
+                    f"Missing frontmatter field: {field}"
+                )
 
-    print("\n[5/5] Cleaning up")
+        if "Publisher Content Test Review" not in content:
+            raise RuntimeError(
+                "Generated article title is incorrect."
+            )
 
-    if output_file.exists():
-        output_file.unlink()
+        if "## Pros" not in content:
+            raise RuntimeError(
+                "Pros section was not generated."
+            )
 
-    print("Temporary content file removed.")
+        if "## Cons" not in content:
+            raise RuntimeError(
+                "Cons section was not generated."
+            )
+
+        if "## Pricing" not in content:
+            raise RuntimeError(
+                "Pricing section was not generated."
+            )
+
+        if "## Sources" not in content:
+            raise RuntimeError(
+                "Sources section was not generated."
+            )
+
+        # -----------------------------------------------------
+        # 4. Finish
+        # -----------------------------------------------------
+
+        print("\n[4/4] Verification complete")
+        print("Generated file:", Path(output_file).name)
+        print("Content length:", len(content))
 
     print()
     print("=" * 60)
-    print("CONTENT PUBLISH TEST: PASSED")
+    print("CONTENT BUILDER TEST: PASSED")
     print("=" * 60)
 
 
