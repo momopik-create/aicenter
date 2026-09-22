@@ -22,7 +22,9 @@ class ContentBuilder:
                 / "products"
             )
 
-        self.output_directory = Path(output_directory)
+        self.output_directory = Path(
+            output_directory
+        )
 
         self.output_directory.mkdir(
             parents=True,
@@ -108,13 +110,6 @@ class ContentBuilder:
         self,
         research: Any,
     ) -> float:
-        """
-        Do not invent a rating.
-
-        Until the Decision Agent is enabled
-        and a real scoring mechanism exists,
-        use a neutral default value.
-        """
 
         existing_rating = getattr(
             research,
