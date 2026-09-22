@@ -1,68 +1,73 @@
 name: Research Agent
 
 on:
-workflow_dispatch:
+  workflow_dispatch:
 
 jobs:
-research:
-runs-on: ubuntu-latest
+  research:
+    runs-on: ubuntu-latest
 
-env:
-  TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
-  SEARCH_PROVIDER: ${{ secrets.SEARCH_PROVIDER }}
-  DECISION_PROVIDER: disabled
-  JEV_ENABLED: false
-  PYTHONPATH: ${{ github.workspace }}
-steps:
-  # ------------------------------------------------------
-  # Setup
-  # ------------------------------------------------------
-  - name: Checkout repository
-    uses: actions/checkout@v4
-  - name: Setup Python
-    uses: actions/setup-python@v5
-    with:
-      python-version: "3.12"
-  - name: Install dependencies
-    run: |
-      python -m pip install --upgrade pip
-      pip install -r requirements.txt
-  # ------------------------------------------------------
-  # Decision Agent
-  # ------------------------------------------------------
-  - name: Test Decision Agent
-    run: |
-      python Agents/Decision/tests/test_decision.py
-  # ------------------------------------------------------
-  # Research Agent
-  # ------------------------------------------------------
-  - name: Test Tavily Search
-    run: |
-      python Agents/Research/tests/test_tavily.py
-  - name: Test Research Pipeline
-    run: |
-      python Agents/Research/tests/test_pipeline.py
-  - name: Test Research Review
-    run: |
-      python Agents/Research/tests/test_review.py
-  - name: Test Review Queue
-    run: |
-      python Agents/Research/tests/test_review_queue.py
-  - name: Test Publish Gate
-    run: |
-      python Agents/Research/tests/test_publish_gate.py
-  # ------------------------------------------------------
-  # Publisher Agent
-  # ------------------------------------------------------
-  - name: Test Publisher
-    run: |
-      python Agents/Publisher/tests/test_publisher.py
-  - name: Test Content Publish
-    run: |
-      python Agents/Publisher/tests/test_content_publish.py
-  # ------------------------------------------------------
-  # End-to-End
-  # ------------------------------------------------------
-  - name: Test Research End-to-End
-    run: |
-      python Agents/Research/tests/test_end_to_end.py
+    env:
+      TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+      SEARCH_PROVIDER: ${{ secrets.SEARCH_PROVIDER }}
+      DECISION_PROVIDER: disabled
+      JEV_ENABLED: false
+      PYTHONPATH: ${{ github.workspace }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # Decision Agent
+
+      - name: Test Decision Agent
+        run: |
+          python Agents/Decision/tests/test_decision.py
+
+      # Research Agent
+
+      - name: Test Tavily Search
+        run: |
+          python Agents/Research/tests/test_tavily.py
+
+      - name: Test Research Pipeline
+        run: |
+          python Agents/Research/tests/test_pipeline.py
+
+      - name: Test Research Review
+        run: |
+          python Agents/Research/tests/test_review.py
+
+      - name: Test Review Queue
+        run: |
+          python Agents/Research/tests/test_review_queue.py
+
+      - name: Test Publish Gate
+        run: |
+          python Agents/Research/tests/test_publish_gate.py
+
+      # Publisher Agent
+
+      - name: Test Publisher
+        run: |
+          python Agents/Publisher/tests/test_publisher.py
+
+      - name: Test Content Publish
+        run: |
+          python Agents/Publisher/tests/test_content_publish.py
+
+      # End-to-End
+
+      - name: Test Research End-to-End
+        run: |
+          python Agents/Research/tests/test_end_to_end.py
