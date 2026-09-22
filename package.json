@@ -1,3 +1,4 @@
+```json
 {
   "name": "aicenter",
   "type": "module",
@@ -10,6 +11,7 @@
   },
   "dependencies": {
     "astro": "4.16.19",
-    "@astrojs/sitemap": "3.1.6"
+    "@astrojs/sitemap": "3.6.0"
   }
 }
+```
