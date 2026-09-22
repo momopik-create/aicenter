@@ -1,3 +1,4 @@
+```python
 import json
 
 from Agents.Publisher.agent import PublisherAgent
@@ -19,7 +20,7 @@ def main():
     # 1. Create a valid research record
     # ---------------------------------------------------------
 
-    print("\n[1/6] Creating test research record")
+    print("\n[1/7] Creating test research record")
 
     test_file = store.directory / "publisher_test.json"
 
@@ -33,7 +34,25 @@ def main():
                 "title": "Example",
                 "source_type": "official",
                 "excerpt": "Test source",
+                "reliability_score": 1.0,
             }
+        ],
+        "facts": [
+            "Example product used for Publisher Agent testing."
+        ],
+        "pricing": [
+            {
+                "name": "Pro",
+                "price": "$19/month",
+                "description": "Example paid plan",
+            }
+        ],
+        "pros": [
+            "Easy to use",
+            "Useful for testing",
+        ],
+        "cons": [
+            "Test data only",
         ],
         "review_status": ReviewStatus.PENDING.value,
         "review_note": None,
@@ -54,7 +73,7 @@ def main():
     # 2. Verify pending research cannot be published
     # ---------------------------------------------------------
 
-    print("\n[2/6] Testing pending research")
+    print("\n[2/7] Testing pending research")
 
     result = agent.publish(product_name)
 
@@ -76,7 +95,7 @@ def main():
     # 3. Approve research and publish
     # ---------------------------------------------------------
 
-    print("\n[3/6] Approving research")
+    print("\n[3/7] Approving research")
 
     store.update_status(
         product_name,
@@ -94,7 +113,7 @@ def main():
 
     if not result.success:
         raise RuntimeError(
-            "Publisher rejected a valid approved item."
+            f"Publisher rejected a valid approved item: {result.error}"
         )
 
     if not result.published:
@@ -116,7 +135,7 @@ def main():
     # 4. Verify publication metadata
     # ---------------------------------------------------------
 
-    print("\n[4/6] Verifying publication metadata")
+    print("\n[4/7] Verifying publication metadata")
 
     stored_data = json.loads(
         test_file.read_text(
@@ -165,10 +184,86 @@ def main():
         )
 
     # ---------------------------------------------------------
-    # 5. Verify duplicate publishing is blocked
+    # 5. Verify generated Astro content
     # ---------------------------------------------------------
 
-    print("\n[5/6] Testing duplicate publish protection")
+    print("\n[5/7] Verifying generated Astro content")
+
+    content_file_value = stored_data.get("content_file")
+
+    if not content_file_value:
+        raise RuntimeError(
+            "Publisher did not store the generated content file path."
+        )
+
+    content_file = agent.content_builder.output_directory / (
+        "publisher-test.md"
+    )
+
+    print("Expected content file:", content_file)
+    print("Stored content path:", content_file_value)
+
+    if not content_file.exists():
+        raise RuntimeError(
+            "ContentBuilder did not generate the expected Markdown file."
+        )
+
+    content = content_file.read_text(
+        encoding="utf-8"
+    )
+
+    required_fields = [
+        "title:",
+        "description:",
+        "rating:",
+        "date:",
+        "pricing_tier:",
+    ]
+
+    for field in required_fields:
+        if field not in content:
+            raise RuntimeError(
+                f"Generated content is missing frontmatter field: {field}"
+            )
+
+    if "Publisher Test Review" not in content:
+        raise RuntimeError(
+            "Generated article title is incorrect."
+        )
+
+    if "## Key Facts" not in content:
+        raise RuntimeError(
+            "Generated article is missing Key Facts section."
+        )
+
+    if "## Pricing" not in content:
+        raise RuntimeError(
+            "Generated article is missing Pricing section."
+        )
+
+    if "## Pros" not in content:
+        raise RuntimeError(
+            "Generated article is missing Pros section."
+        )
+
+    if "## Cons" not in content:
+        raise RuntimeError(
+            "Generated article is missing Cons section."
+        )
+
+    if "## Sources" not in content:
+        raise RuntimeError(
+            "Generated article is missing Sources section."
+        )
+
+    print("Generated content verified successfully.")
+    print("Content length:", len(content))
+
+    # ---------------------------------------------------------
+    # 6. Verify duplicate publishing is blocked
+    # ---------------------------------------------------------
+
+    print("\n[6/7] Testing duplicate publish protection")
 
     duplicate_result = agent.publish(product_name)
 
@@ -196,20 +291,25 @@ def main():
         )
 
     # ---------------------------------------------------------
-    # 6. Cleanup
+    # 7. Cleanup
     # ---------------------------------------------------------
 
-    print("\n[6/6] Cleaning up")
+    print("\n[7/7] Cleaning up")
 
     if test_file.exists():
         test_file.unlink()
 
-    print("Temporary test file removed.")
+    if content_file.exists():
+        content_file.unlink()
 
-    print("\n" + "=" * 60)
+    print("Temporary test files removed.")
+
+    print()
+    print("=" * 60)
     print("PUBLISHER AGENT TEST: PASSED")
     print("=" * 60)
 
 
 if __name__ == "__main__":
     main()
+```
