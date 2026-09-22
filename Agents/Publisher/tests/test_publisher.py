@@ -15,12 +15,16 @@ def main():
     store = ReviewStore()
     agent = PublisherAgent()
 
-    print("\n[1/7] Creating test research record")
-
     test_file = store.directory / "publisher_test.json"
 
+    # ---------------------------------------------------------
+    # 1. Create test research record
+    # ---------------------------------------------------------
+
+    print("\n[1/7] Creating test research record")
+
     data = {
-        "product_name": product_name,
+        "product_name": "Publisher Test",
         "product_url": "https://example.com",
         "status": "completed",
         "sources": [
@@ -33,7 +37,7 @@ def main():
             }
         ],
         "facts": [
-            "Example product used for Publisher Agent testing."
+            "A test product used to verify the publisher pipeline."
         ],
         "pricing": [
             {
@@ -64,6 +68,10 @@ def main():
 
     print(f"Test file: {test_file}")
 
+    # ---------------------------------------------------------
+    # 2. Verify pending research cannot be published
+    # ---------------------------------------------------------
+
     print("\n[2/7] Testing pending research")
 
     result = agent.publish(product_name)
@@ -81,6 +89,10 @@ def main():
         raise RuntimeError(
             "Publisher marked an unapproved item as published."
         )
+
+    # ---------------------------------------------------------
+    # 3. Approve research and publish
+    # ---------------------------------------------------------
 
     print("\n[3/7] Approving research")
 
@@ -118,6 +130,10 @@ def main():
             "Publisher did not return a publication timestamp."
         )
 
+    # ---------------------------------------------------------
+    # 4. Verify publication metadata
+    # ---------------------------------------------------------
+
     print("\n[4/7] Verifying publication metadata")
 
     stored_data = json.loads(
@@ -146,25 +162,56 @@ def main():
             "Publisher name was not stored correctly."
         )
 
+    if stored_data.get("publisher_version") != "0.4.0":
+        raise RuntimeError(
+            "Publisher version was not stored correctly."
+        )
+
+    content_file = stored_data.get("content_file")
+
+    if not content_file:
+        raise RuntimeError(
+            "Content file path was not stored."
+        )
+
     print("Publication metadata verified.")
+    print("Content file:", content_file)
+
+    # ---------------------------------------------------------
+    # 5. Verify generated Astro content
+    # ---------------------------------------------------------
 
     print("\n[5/7] Verifying generated Astro content")
 
-    content_file = (
-        agent.content_builder.output_directory
-        / "publisher-test.md"
-    )
+    from pathlib import Path
 
-    if not content_file.exists():
+    content_path = Path(content_file)
+
+    if not content_path.exists():
         raise RuntimeError(
-            "ContentBuilder did not generate the expected Markdown file."
+            f"Generated Astro content does not exist: {content_path}"
         )
 
-    content = content_file.read_text(
+    content = content_path.read_text(
         encoding="utf-8"
     )
 
-    required_fields = [
+    required_sections = [
+        "Publisher Test Review",
+        "## Key Facts",
+        "## Pricing",
+        "## Pros",
+        "## Cons",
+        "## Sources",
+    ]
+
+    for section in required_sections:
+        if section not in content:
+            raise RuntimeError(
+                f"Generated article is missing: {section}"
+            )
+
+    required_frontmatter = [
         "title:",
         "description:",
         "rating:",
@@ -172,30 +219,39 @@ def main():
         "pricing_tier:",
     ]
 
-    for field in required_fields:
+    for field in required_frontmatter:
         if field not in content:
             raise RuntimeError(
-                f"Generated content is missing frontmatter field: {field}"
+                f"Generated article is missing frontmatter field: {field}"
             )
 
-required_sections = [
-    "Review",
-    "## Key Facts",
-    "## Pricing",
-    "## Pros",
-    "## Cons",
-    "## Sources",
-]
-
-for section in required_sections:
-    if section not in content:
+    if "Publisher Content Test" not in content:
         raise RuntimeError(
-            f"Generated article is missing: {section}"
+            "Generated article does not contain the expected product name."
+        )
+
+    if "Pro" not in content:
+        raise RuntimeError(
+            "Generated article does not contain pricing data."
+        )
+
+    if "$19/month" not in content:
+        raise RuntimeError(
+            "Generated article does not contain pricing value."
+        )
+
+    if "https://example.com" not in content:
+        raise RuntimeError(
+            "Generated article does not contain source URL."
         )
 
     print("Generated Astro content verified.")
-    print("Content file:", content_file)
+    print("Generated file:", content_path)
     print("Content length:", len(content))
+
+    # ---------------------------------------------------------
+    # 6. Verify duplicate publishing is blocked
+    # ---------------------------------------------------------
 
     print("\n[6/7] Testing duplicate publish protection")
 
@@ -224,13 +280,17 @@ for section in required_sections:
             "Duplicate publish was incorrectly marked as published."
         )
 
+    # ---------------------------------------------------------
+    # 7. Cleanup
+    # ---------------------------------------------------------
+
     print("\n[7/7] Cleaning up")
 
     if test_file.exists():
         test_file.unlink()
 
-    if content_file.exists():
-        content_file.unlink()
+    if content_path.exists():
+        content_path.unlink()
 
     print("Temporary test files removed.")
 
