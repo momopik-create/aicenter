@@ -1,4 +1,3 @@
-```python
 import json
 
 from Agents.Publisher.agent import PublisherAgent
@@ -15,10 +14,6 @@ def main():
 
     store = ReviewStore()
     agent = PublisherAgent()
-
-    # ---------------------------------------------------------
-    # 1. Create a valid research record
-    # ---------------------------------------------------------
 
     print("\n[1/7] Creating test research record")
 
@@ -69,10 +64,6 @@ def main():
 
     print(f"Test file: {test_file}")
 
-    # ---------------------------------------------------------
-    # 2. Verify pending research cannot be published
-    # ---------------------------------------------------------
-
     print("\n[2/7] Testing pending research")
 
     result = agent.publish(product_name)
@@ -90,10 +81,6 @@ def main():
         raise RuntimeError(
             "Publisher marked an unapproved item as published."
         )
-
-    # ---------------------------------------------------------
-    # 3. Approve research and publish
-    # ---------------------------------------------------------
 
     print("\n[3/7] Approving research")
 
@@ -131,36 +118,12 @@ def main():
             "Publisher did not return a publication timestamp."
         )
 
-    # ---------------------------------------------------------
-    # 4. Verify publication metadata
-    # ---------------------------------------------------------
-
     print("\n[4/7] Verifying publication metadata")
 
     stored_data = json.loads(
         test_file.read_text(
             encoding="utf-8"
         )
-    )
-
-    print(
-        "Stored published:",
-        stored_data.get("published"),
-    )
-
-    print(
-        "Stored publication ID:",
-        stored_data.get("publication_id"),
-    )
-
-    print(
-        "Stored published at:",
-        stored_data.get("published_at"),
-    )
-
-    print(
-        "Stored publisher:",
-        stored_data.get("publisher"),
     )
 
     if stored_data.get("published") is not True:
@@ -183,25 +146,14 @@ def main():
             "Publisher name was not stored correctly."
         )
 
-    # ---------------------------------------------------------
-    # 5. Verify generated Astro content
-    # ---------------------------------------------------------
+    print("Publication metadata verified.")
 
     print("\n[5/7] Verifying generated Astro content")
 
-    content_file_value = stored_data.get("content_file")
-
-    if not content_file_value:
-        raise RuntimeError(
-            "Publisher did not store the generated content file path."
-        )
-
-    content_file = agent.content_builder.output_directory / (
-        "publisher-test.md"
+    content_file = (
+        agent.content_builder.output_directory
+        / "publisher-test.md"
     )
-
-    print("Expected content file:", content_file)
-    print("Stored content path:", content_file_value)
 
     if not content_file.exists():
         raise RuntimeError(
@@ -226,42 +178,24 @@ def main():
                 f"Generated content is missing frontmatter field: {field}"
             )
 
-    if "Publisher Test Review" not in content:
-        raise RuntimeError(
-            "Generated article title is incorrect."
-        )
+    required_sections = [
+        "Publisher Test Review",
+        "## Key Facts",
+        "## Pricing",
+        "## Pros",
+        "## Cons",
+        "## Sources",
+    ]
 
-    if "## Key Facts" not in content:
-        raise RuntimeError(
-            "Generated article is missing Key Facts section."
-        )
+    for section in required_sections:
+        if section not in content:
+            raise RuntimeError(
+                f"Generated article is missing: {section}"
+            )
 
-    if "## Pricing" not in content:
-        raise RuntimeError(
-            "Generated article is missing Pricing section."
-        )
-
-    if "## Pros" not in content:
-        raise RuntimeError(
-            "Generated article is missing Pros section."
-        )
-
-    if "## Cons" not in content:
-        raise RuntimeError(
-            "Generated article is missing Cons section."
-        )
-
-    if "## Sources" not in content:
-        raise RuntimeError(
-            "Generated article is missing Sources section."
-        )
-
-    print("Generated content verified successfully.")
+    print("Generated Astro content verified.")
+    print("Content file:", content_file)
     print("Content length:", len(content))
-
-    # ---------------------------------------------------------
-    # 6. Verify duplicate publishing is blocked
-    # ---------------------------------------------------------
 
     print("\n[6/7] Testing duplicate publish protection")
 
@@ -290,10 +224,6 @@ def main():
             "Duplicate publish was incorrectly marked as published."
         )
 
-    # ---------------------------------------------------------
-    # 7. Cleanup
-    # ---------------------------------------------------------
-
     print("\n[7/7] Cleaning up")
 
     if test_file.exists():
@@ -312,4 +242,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-```
