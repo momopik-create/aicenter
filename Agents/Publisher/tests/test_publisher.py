@@ -179,20 +179,19 @@ def main():
             )
 
 required_sections = [
-    "Publisher_test Review",
+    "Review",
     "## Key Facts",
     "## Pricing",
     "## Pros",
     "## Cons",
     "## Sources",
 ]
-    ]
 
-    for section in required_sections:
-        if section not in content:
-            raise RuntimeError(
-                f"Generated article is missing: {section}"
-            )
+for section in required_sections:
+    if section not in content:
+        raise RuntimeError(
+            f"Generated article is missing: {section}"
+        )
 
     print("Generated Astro content verified.")
     print("Content file:", content_file)
