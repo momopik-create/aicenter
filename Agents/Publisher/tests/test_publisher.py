@@ -178,13 +178,14 @@ def main():
                 f"Generated content is missing frontmatter field: {field}"
             )
 
-    required_sections = [
-        "Publisher Test Review",
-        "## Key Facts",
-        "## Pricing",
-        "## Pros",
-        "## Cons",
-        "## Sources",
+required_sections = [
+    "Publisher_test Review",
+    "## Key Facts",
+    "## Pricing",
+    "## Pros",
+    "## Cons",
+    "## Sources",
+]
     ]
 
     for section in required_sections:
