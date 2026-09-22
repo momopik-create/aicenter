@@ -59,14 +59,6 @@ jobs:
       - name: Test Publish Gate
         run: |
           python Agents/Research/tests/test_publish_gate.py
-          
-      - name: Test Publisher
-        run: |
-          python Agents/Publisher/tests/test_publisher.py
-
-      - name: Test Research End-to-End
-        run: |
-          python Agents/Research/tests/test_end_to_end.py
 
       # ------------------------------------------------------
       # Publisher Agent
@@ -75,3 +67,11 @@ jobs:
       - name: Test Publisher Agent
         run: |
           python Agents/Publisher/tests/test_publisher.py
+
+      # ------------------------------------------------------
+      # Full End-to-End
+      # ------------------------------------------------------
+
+      - name: Test Research to Publish End-to-End
+        run: |
+          python Agents/Research/tests/test_end_to_end.py
