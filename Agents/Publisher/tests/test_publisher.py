@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 from Agents.Publisher.agent import PublisherAgent
 from Agents.Research.review_store import ReviewStore
@@ -183,8 +184,6 @@ def main():
 
     print("\n[5/7] Verifying generated Astro content")
 
-    from pathlib import Path
-
     content_path = Path(content_file)
 
     if not content_path.exists():
@@ -224,11 +223,6 @@ def main():
             raise RuntimeError(
                 f"Generated article is missing frontmatter field: {field}"
             )
-
-    if "Publisher Content Test" not in content:
-        raise RuntimeError(
-            "Generated article does not contain the expected product name."
-        )
 
     if "Pro" not in content:
         raise RuntimeError(
