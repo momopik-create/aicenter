@@ -1,11 +1,26 @@
+from pathlib import Path
 import json
 
 from Agents.Research.pipeline import ResearchPipeline
+from Agents.Research.tools.search_models import SearchResponse, SearchResult
 from Agents.Research.input import ResearchInput
 from Agents.Research.review_store import ReviewStore
 from Agents.Research.publish_gate import PublishGate
 from Agents.Contracts.research import ReviewStatus
 from Agents.Publisher.agent import PublisherAgent
+
+
+class FakeSearchProvider:
+    def search(self, query, max_results=10):
+        return SearchResponse(
+            query=query,
+            success=True,
+            results=[
+                SearchResult("Official", "https://example.com/official", "Official facts."),
+                SearchResult("Docs", "https://example.com/docs", "Documentation."),
+                SearchResult("Pricing", "https://example.com/pricing", "Pricing information."),
+            ],
+        )
 
 
 def main():
@@ -36,7 +51,10 @@ def main():
 
     print("\n[2/9] Running research pipeline")
 
-    pipeline = ResearchPipeline()
+    pipeline = ResearchPipeline(
+        search_tool=FakeSearchProvider(),
+        store=ReviewStore(directory="/tmp/aicenter-e2e"),
+    )
 
     result = pipeline.run(research_input)
 
@@ -66,7 +84,7 @@ def main():
 
     print("\n[3/9] Saving research result")
 
-    store = ReviewStore()
+    store = ReviewStore(directory="/tmp/aicenter-e2e")
 
     file_path = store.save(result)
 
@@ -183,7 +201,7 @@ def main():
 
     print("\n[7/9] Publishing research result")
 
-    publisher = PublisherAgent()
+    publisher = PublisherAgent(store=store)
 
     publish_result = publisher.publish(
         product_name
@@ -318,6 +336,25 @@ def main():
         raise RuntimeError(
             "Publisher allowed duplicate publication."
         )
+
+    if not duplicate_result.already_published:
+        raise RuntimeError(
+            "Publisher did not detect duplicate publication."
+        )
+
+    if file_path.exists():
+        file_path.unlink()
+    published_content = published_data.get("content_file")
+    if published_content and Path(published_content).exists():
+        Path(published_content).unlink()
+
+    print("\nEnd-to-end test: PASSED")
+
+    if file_path.exists():
+        file_path.unlink()
+    published_content = published_data.get("content_file")
+    if published_content and Path(published_content).exists():
+        Path(published_content).unlink()
 
     if not duplicate_result.already_published:
         raise RuntimeError(
