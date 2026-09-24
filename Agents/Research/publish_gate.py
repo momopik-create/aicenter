@@ -14,15 +14,18 @@ from .review_store import ReviewStore
 
 class PublishGate:
     """
-    Final safety gate before a research result can be published.
+    Final safety gate before publication.
 
-    Publishing is allowed only when:
-    - a review record exists
-    - the review is approved
-    - research completed successfully
-    - a product URL exists
-    - at least one research source exists
+    Publishing requires:
+    - an existing research record
+    - approved review status
+    - completed research
+    - a product URL
+    - at least one source
     """
+
+    name = "publish_gate"
+    version = "2.0.0"
 
     def __init__(
         self,
@@ -55,32 +58,33 @@ class PublishGate:
     ) -> bool:
         file_path = self._get_file(product_name)
 
-        # 1. A review record must exist.
         if not file_path.exists():
             return False
 
         data = self._load(file_path)
 
-        # 2. Human/Review approval is mandatory.
         if (
             data.get("review_status")
             != ReviewStatus.APPROVED.value
         ):
             return False
 
-        # 3. Research itself must have completed successfully.
         if (
             data.get("status")
             != ResearchStatus.COMPLETED.value
         ):
             return False
 
-        # 4. Product URL is mandatory.
         if not data.get("product_url"):
             return False
 
-        # 5. At least one research source is mandatory.
         sources = data.get("sources", [])
+
+        if not isinstance(
+            sources,
+            list,
+        ):
+            return False
 
         if not sources:
             return False
