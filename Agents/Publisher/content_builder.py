@@ -199,10 +199,8 @@ class ContentBuilder:
             [],
         ) or []
 
+        sections.append("## Pricing")
         if pricing:
-            sections.append(
-                "## Pricing"
-            )
 
             for item in pricing:
 
@@ -247,51 +245,23 @@ class ContentBuilder:
                         f"- {item}"
                     )
 
-        pros = getattr(
-            research,
-            "pros",
-            [],
-        ) or []
-
+        pros = getattr(research, "pros", []) or []
+        sections.append("## Pros")
         if pros:
-            sections.append(
-                "## Pros"
-            )
+            sections.extend(f"- {item}" for item in pros if str(item).strip())
+        else:
+            sections.append("- No independent advantage was established from the reviewed evidence.")
 
-            sections.extend(
-                f"- {item}"
-                for item in pros
-                if str(item).strip()
-            )
-
-        cons = getattr(
-            research,
-            "cons",
-            [],
-        ) or []
-
+        cons = getattr(research, "cons", []) or []
+        sections.append("## Cons")
         if cons:
-            sections.append(
-                "## Cons"
-            )
+            sections.extend(f"- {item}" for item in cons if str(item).strip())
+        else:
+            sections.append("- No independent disadvantage was established from the reviewed evidence.")
 
-            sections.extend(
-                f"- {item}"
-                for item in cons
-                if str(item).strip()
-            )
-
-        sources = getattr(
-            research,
-            "sources",
-            [],
-        ) or []
-
+        sources = getattr(research, "sources", []) or []
+        sections.append("## Sources")
         if sources:
-            sections.append(
-                "## Sources"
-            )
-
             for source in sources:
 
                 url = getattr(
