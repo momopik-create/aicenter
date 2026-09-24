@@ -4,7 +4,7 @@ from .tavily_provider import TavilyProvider
 
 class WebSearchTool:
     name = "web_search"
-    version = "1.0.0"
+    version = "2.0.0"
 
     def __init__(self):
         self.provider = TavilyProvider()
@@ -14,6 +14,14 @@ class WebSearchTool:
         query: str,
         max_results: int = 10,
     ) -> SearchResponse:
+
+        if not query.strip():
+            return SearchResponse(
+                query=query,
+                success=False,
+                results=[],
+                error="Search query cannot be empty.",
+            )
 
         return self.provider.search(
             query=query,
