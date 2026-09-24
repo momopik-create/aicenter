@@ -38,4 +38,4 @@ class ResearchConfig:
             "RESEARCH_MAX_EXCERPT_LENGTH",
             "2000",
         )
-    )
+    ) 
