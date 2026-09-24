@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import List, Optional
+from typing import Optional
 
 
 class ResearchStatus(str, Enum):
@@ -31,23 +33,23 @@ class ResearchPackage:
     product_url: str
     status: ResearchStatus
 
-    sources: List[SourceEvidence] = field(
+    sources: list[SourceEvidence] = field(
         default_factory=list
     )
 
-    facts: List[str] = field(
+    facts: list[str] = field(
         default_factory=list
     )
 
-    pricing: List[dict] = field(
+    pricing: list[dict] = field(
         default_factory=list
     )
 
-    pros: List[str] = field(
+    pros: list[str] = field(
         default_factory=list
     )
 
-    cons: List[str] = field(
+    cons: list[str] = field(
         default_factory=list
     )
 
