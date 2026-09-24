@@ -1,7 +1,13 @@
+import os
+
 from Agents.Research.tools.web_search import WebSearchTool
 
 
 def main():
+    if not os.getenv("TAVILY_API_KEY"):
+        print("Tavily smoke test skipped: TAVILY_API_KEY is not configured.")
+        return
+
     search = WebSearchTool()
 
     response = search.search(
