@@ -1,55 +1,36 @@
 from Agents.Contracts.research import ResearchStatus
 from Agents.Contracts.research_input import ResearchInput
 from Agents.Research.pipeline import ResearchPipeline
+from Agents.Research.review_store import ReviewStore
+from Agents.Research.tools.search_models import SearchResponse, SearchResult
 
 
-PRODUCT_NAME = "ChatGPT"
-PRODUCT_URL = "https://chatgpt.com"
+class FakeSearchProvider:
+    def search(self, query: str, max_results: int = 10) -> SearchResponse:
+        return SearchResponse(
+            query=query,
+            success=True,
+            results=[
+                SearchResult("Official", "https://example.com/official", "Official product information."),
+                SearchResult("Docs", "https://example.com/docs", "Documentation and features."),
+                SearchResult("Pricing", "https://example.com/pricing", "Pricing plans and billing."),
+            ],
+        )
 
 
 def main():
-    print("=" * 60)
-    print("RESEARCH PIPELINE TEST")
-    print("=" * 60)
-
-    research_input = ResearchInput(
-        product_name=PRODUCT_NAME,
-        url=PRODUCT_URL,
+    pipeline = ResearchPipeline(
+        search_tool=FakeSearchProvider(),
+        store=ReviewStore(directory="/tmp/aicenter-test-research"),
+    )
+    output = pipeline.run(
+        ResearchInput("ChatGPT", "https://chatgpt.com")
     )
 
-    pipeline = ResearchPipeline()
-
-    output = pipeline.run(research_input)
-
-    print(f"Product: {output.product_name}")
-    print(f"URL: {output.product_url}")
-    print(f"Status: {output.status}")
-    print(f"Sources found: {len(output.sources)}")
-
-    if output.status != ResearchStatus.COMPLETED:
-        raise RuntimeError(
-            "Research pipeline did not complete successfully."
-        )
-
-    if not output.sources:
-        raise RuntimeError(
-            "Research pipeline returned no sources."
-        )
-
-    for index, source in enumerate(
-        output.sources,
-        start=1,
-    ):
-        print()
-        print(f"Source {index}")
-        print(f"Title: {source.title}")
-        print(f"URL: {source.url}")
-        print(f"Type: {source.source_type}")
-
-    print()
-    print("=" * 60)
-    print("RESEARCH PIPELINE TEST: PASSED")
-    print("=" * 60)
+    assert output.status == ResearchStatus.COMPLETED
+    assert len(output.sources) == 3
+    assert output.sources[2].source_type == "pricing"
+    print("Research Pipeline test: PASSED")
 
 
 if __name__ == "__main__":
