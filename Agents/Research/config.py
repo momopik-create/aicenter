@@ -3,7 +3,7 @@ import os
 
 class ResearchConfig:
     name = "research_config"
-    version = "1.0.0"
+    version = "2.0.0"
 
     MAX_SEARCH_RESULTS = int(
         os.getenv(
@@ -23,5 +23,19 @@ class ResearchConfig:
         os.getenv(
             "RESEARCH_MIN_SOURCES",
             "3",
+        )
+    )
+
+    MAX_FETCHED_SOURCES = int(
+        os.getenv(
+            "RESEARCH_MAX_FETCHED_SOURCES",
+            "5",
+        )
+    )
+
+    MAX_EXCERPT_LENGTH = int(
+        os.getenv(
+            "RESEARCH_MAX_EXCERPT_LENGTH",
+            "2000",
         )
     )
