@@ -1,8 +1,8 @@
 from Agents.Research.review import ResearchReview
 from Agents.Research.review_queue import ReviewQueue
 from Agents.Research.review_store import ReviewStore
-from Agents.Research.schema import (
-    ResearchResult,
+from Agents.Contracts.research import (
+    ResearchPackage,
     ResearchStatus,
 )
 
@@ -21,9 +21,9 @@ def main():
     files = []
 
     for product in test_products:
-        result = ResearchResult(
+        result = ResearchPackage(
             product_name=product,
-            url="https://example.com",
+            product_url="https://example.com",
             status=ResearchStatus.COMPLETED,
             sources=[],
         )
