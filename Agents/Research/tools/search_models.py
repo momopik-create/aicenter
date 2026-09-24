@@ -16,4 +16,4 @@ class SearchResponse:
     results: List[SearchResult] = field(
         default_factory=list
     )
-    error: Optional[str] = None
+    error: Optional[str] = None 
