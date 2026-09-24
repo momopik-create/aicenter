@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from Agents.Contracts.research import (
     ResearchPackage,
     ResearchStatus,
@@ -9,26 +11,25 @@ from .agent import ResearchAgent
 from .config import ResearchConfig
 from .review_store import ReviewStore
 from .tools.source_validator import SourceValidator
-from .tools.web_fetch import WebFetchTool
 from .tools.web_search import WebSearchTool
 
 
 class ResearchPipeline:
     name = "research_pipeline"
-    version = "1.0.0"
+    version = "2.1.0"
 
-    def __init__(self):
-        self.agent = ResearchAgent()
-        self.search_tool = WebSearchTool()
-        self.fetch_tool = WebFetchTool()
-        self.validator = SourceValidator()
-        self.store = ReviewStore()
-
-    def run(
+    def __init__(
         self,
-        research_input: ResearchInput,
-    ) -> ResearchPackage:
+        search_tool=None,
+        validator=None,
+        store=None,
+    ):
+        self.agent = ResearchAgent()
+        self.search_tool = search_tool or WebSearchTool()
+        self.validator = validator or SourceValidator()
+        self.store = store or ReviewStore()
 
+    def run(self, research_input: ResearchInput) -> ResearchPackage:
         package = self.agent.run(
             product_name=research_input.product_name,
             url=research_input.url,
@@ -37,9 +38,7 @@ class ResearchPipeline:
         try:
             search = self.search_tool.search(
                 query=research_input.product_name,
-                max_results=(
-                    ResearchConfig.MAX_SEARCH_RESULTS
-                ),
+                max_results=ResearchConfig.MAX_SEARCH_RESULTS,
             )
 
             if not search.success:
@@ -47,37 +46,31 @@ class ResearchPipeline:
                 self.store.save(package)
                 return package
 
+            seen: set[str] = set()
             for item in search.results:
-                validation = self.validator.validate(
-                    item.url
-                )
-
-                if not validation.valid:
+                validation = self.validator.validate(item.url)
+                if not validation.valid or item.url in seen:
                     continue
-
+                seen.add(item.url)
                 package.sources.append(
                     SourceEvidence(
                         url=item.url,
-                        title=item.title,
+                        title=item.title or item.url,
                         source_type=validation.source_type,
-                        excerpt=item.content,
+                        excerpt=(item.content or "")[: ResearchConfig.MAX_EXCERPT_LENGTH],
                     )
                 )
 
-            if len(package.sources) < (
-                ResearchConfig.MIN_SOURCES
-            ):
-                package.status = ResearchStatus.FAILED
-            else:
-                package.status = (
-                    ResearchStatus.COMPLETED
-                )
-
+            package.status = (
+                ResearchStatus.COMPLETED
+                if len(package.sources) >= ResearchConfig.MIN_SOURCES
+                else ResearchStatus.FAILED
+            )
             self.store.save(package)
-
             return package
 
-        except Exception:
+        except Exception as exc:
             package.status = ResearchStatus.FAILED
+            package.review_note = str(exc)
             self.store.save(package)
             return package
