@@ -27,3 +27,4 @@ class SEOResult:
     schema_type: Optional[str] = None
 
     score: Optional[float] = None
+
