@@ -110,4 +110,4 @@ class SourceValidator:
         ):
             return "website"
 
-        return "website"
+        return "website" 
