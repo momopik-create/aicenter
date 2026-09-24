@@ -6,7 +6,7 @@ from Agents.Contracts.research import (
 
 class ResearchAgent:
     name = "research_agent"
-    version = "1.0.0"
+    version = "2.0.0"
 
     def run(
         self,
