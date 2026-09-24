@@ -1,18 +1,9 @@
 # Research Agent Security
 
-## Secrets
+Required secret:
 
-The Research Agent must never store API keys in source code.
+- `TAVILY_API_KEY`
 
-Required environment variables:
+Never commit `.env` files, API keys, access tokens, passwords, or private credentials.
 
-- SEARCH_PROVIDER
-- TAVILY_API_KEY
-
-Never commit:
-
-- .env
-- real API keys
-- access tokens
-- passwords
-- private credentials
+Research records may contain public source URLs and excerpts. Review them before publication.
