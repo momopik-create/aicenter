@@ -1,7 +1,5 @@
-from dataclasses import dataclass
+"""Backward-compatible alias for the canonical research input contract."""
 
+from Agents.Contracts.research_input import ResearchInput
 
-@dataclass
-class ResearchInput:
-    product_name: str
-    url: str
+__all__ = ["ResearchInput"]
