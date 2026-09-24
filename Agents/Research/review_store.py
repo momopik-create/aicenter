@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import json
 from dataclasses import asdict
 from pathlib import Path
@@ -7,7 +9,7 @@ from Agents.Contracts.research import ReviewStatus
 
 class ReviewStore:
     name = "review_store"
-    version = "1.0.0"
+    version = "2.0.0"
 
     def __init__(self):
         self.directory = (
@@ -42,6 +44,23 @@ class ReviewStore:
         )
 
         return file_path
+
+    def load(self, product_name: str):
+        file_path = (
+            self.directory
+            / f"{self._safe_filename(product_name)}.json"
+        )
+
+        if not file_path.exists():
+            raise FileNotFoundError(
+                f"Review not found: {product_name}"
+            )
+
+        return json.loads(
+            file_path.read_text(
+                encoding="utf-8"
+            )
+        )
 
     def update_status(
         self,
