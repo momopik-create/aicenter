@@ -1,11 +1,7 @@
-from dataclasses import dataclass
-from typing import Optional
+"""Backward-compatible alias for the canonical source contract."""
 
+from Agents.Contracts.research import SourceEvidence
 
-@dataclass
-class ResearchSource:
-    url: str
-    title: str
-    source_type: str
-    excerpt: Optional[str] = None
-    reliability_score: Optional[float] = None
+ResearchSource = SourceEvidence
+
+__all__ = ["ResearchSource", "SourceEvidence"]
