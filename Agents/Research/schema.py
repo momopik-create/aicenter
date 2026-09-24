@@ -1,25 +1,23 @@
-from dataclasses import dataclass, field
-from enum import Enum
-from typing import List, Optional
+"""Backward-compatible aliases for the v2 Research contracts.
 
+The canonical contracts live in ``Agents.Contracts.research``.
+"""
 
-class ResearchStatus(str, Enum):
-    IN_PROGRESS = "in_progress"
-    COMPLETED = "completed"
-    FAILED = "failed"
+from Agents.Contracts.research import (
+    ResearchPackage,
+    ResearchStatus,
+    ReviewStatus,
+    SourceEvidence,
+)
 
+ResearchResult = ResearchPackage
+ResearchSource = SourceEvidence
 
-class ReviewStatus(str, Enum):
-    PENDING = "pending"
-    APPROVED = "approved"
-    REJECTED = "rejected"
-
-
-@dataclass
-class ResearchResult:
-    product_name: str
-    url: str
-    status: ResearchStatus
-    sources: List = field(default_factory=list)
-    review_status: ReviewStatus = ReviewStatus.PENDING
-    review_note: Optional[str] = None
+__all__ = [
+    "ResearchPackage",
+    "ResearchResult",
+    "ResearchStatus",
+    "ReviewStatus",
+    "SourceEvidence",
+    "ResearchSource",
+]
