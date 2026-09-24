@@ -11,7 +11,7 @@ class ValidationResult:
 
 class SourceValidator:
     name = "source_validator"
-    version = "1.0.0"
+    version = "2.0.0"
 
     def validate(
         self,
@@ -45,9 +45,25 @@ class SourceValidator:
                     reason="Missing domain",
                 )
 
+            hostname = (
+                parsed.hostname or ""
+            ).lower()
+
+            if not hostname:
+                return ValidationResult(
+                    valid=False,
+                    source_type="unknown",
+                    reason="Missing hostname",
+                )
+
+            source_type = self._classify(
+                hostname,
+                parsed.path,
+            )
+
             return ValidationResult(
                 valid=True,
-                source_type="website",
+                source_type=source_type,
             )
 
         except Exception as error:
@@ -56,3 +72,42 @@ class SourceValidator:
                 source_type="unknown",
                 reason=str(error),
             )
+
+    @staticmethod
+    def _classify(
+        hostname: str,
+        path: str,
+    ) -> str:
+
+        path_lower = path.lower()
+
+        if any(
+            marker in path_lower
+            for marker in (
+                "pricing",
+                "plans",
+                "price",
+            )
+        ):
+            return "pricing"
+
+        if any(
+            marker in path_lower
+            for marker in (
+                "docs",
+                "documentation",
+                "help",
+            )
+        ):
+            return "documentation"
+
+        if hostname.startswith(
+            (
+                "www.",
+                "app.",
+                "blog.",
+            )
+        ):
+            return "website"
+
+        return "website"
