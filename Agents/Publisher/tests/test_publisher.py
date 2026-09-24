@@ -13,8 +13,8 @@ def main():
 
     product_name = "publisher_test"
 
-    store = ReviewStore()
-    agent = PublisherAgent()
+    store = ReviewStore(directory="/tmp/aicenter-publisher-test")
+    agent = PublisherAgent(store=store)
 
     test_file = store.directory / "publisher_test.json"
 
@@ -29,13 +29,9 @@ def main():
         "product_url": "https://example.com",
         "status": "completed",
         "sources": [
-            {
-                "url": "https://example.com",
-                "title": "Example",
-                "source_type": "official",
-                "excerpt": "Test source",
-                "reliability_score": 1.0,
-            }
+            {"url": "https://example.com/1", "title": "Example 1", "source_type": "official", "excerpt": "Test source 1", "reliability_score": 1.0},
+            {"url": "https://example.com/2", "title": "Example 2", "source_type": "documentation", "excerpt": "Test source 2", "reliability_score": 1.0},
+            {"url": "https://example.com/3", "title": "Example 3", "source_type": "pricing", "excerpt": "Test source 3", "reliability_score": 1.0}
         ],
         "facts": [
             "A test product used to verify the publisher pipeline."
@@ -163,7 +159,7 @@ def main():
             "Publisher name was not stored correctly."
         )
 
-    if stored_data.get("publisher_version") != "0.4.0":
+    if stored_data.get("publisher_version") != "1.0.0":
         raise RuntimeError(
             "Publisher version was not stored correctly."
         )
@@ -234,7 +230,7 @@ def main():
             "Generated article does not contain pricing value."
         )
 
-    if "https://example.com" not in content:
+    if "https://example.com/1" not in content:
         raise RuntimeError(
             "Generated article does not contain source URL."
         )
