@@ -1,19 +1,20 @@
-from schema import ResearchResult, ResearchStatus
+from Agents.Contracts.research import ResearchPackage, ResearchStatus
 
 
-def test_research_result_defaults():
-    result = ResearchResult(
+def test_research_package_defaults():
+    result = ResearchPackage(
         product_name="Test Product",
-        url="https://example.com",
+        product_url="https://example.com",
+        status=ResearchStatus.IN_PROGRESS,
     )
 
     assert result.product_name == "Test Product"
-    assert result.url == "https://example.com"
-    assert result.status == ResearchStatus.PENDING
-    assert result.claims == []
+    assert result.product_url == "https://example.com"
+    assert result.status == ResearchStatus.IN_PROGRESS
     assert result.sources == []
+    assert result.facts == []
 
 
 if __name__ == "__main__":
-    test_research_result_defaults()
-    print("Research schema test passed.")
+    test_research_package_defaults()
+    print("Research contract test passed.")
