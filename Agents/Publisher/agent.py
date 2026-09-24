@@ -1,7 +1,12 @@
+from __future__ import annotations
+
 import json
 from datetime import datetime, timezone
 
+from Agents.Contracts.research import ResearchPackage, ResearchStatus, ReviewStatus, SourceEvidence
 from Agents.Research.publish_gate import PublishGate
+from Agents.Research.review_queue import ReviewQueue
+from Agents.Research.review_store import ReviewStore
 
 from .content_builder import ContentBuilder
 from .schema import PublishResult
@@ -9,208 +14,95 @@ from .schema import PublishResult
 
 class PublisherAgent:
     name = "publisher"
-    version = "0.4.0"
+    version = "1.0.0"
 
-    def __init__(self):
-        self.gate = PublishGate()
-        self.content_builder = ContentBuilder()
+    def __init__(self, store=None, output_directory=None):
+        self.store = store or ReviewStore()
+        self.gate = PublishGate(self.store)
+        self.queue = ReviewQueue(self.store)
+        self.content_builder = ContentBuilder(output_directory=output_directory)
 
-    def publish(
-        self,
-        product_name: str,
-    ) -> PublishResult:
-
-        # --------------------------------------------------
-        # 1. Find research record
-        # --------------------------------------------------
-
-        file_path = self.gate._get_file(product_name)
-
-        if not file_path.exists():
-            return PublishResult(
-                success=False,
-                product_name=product_name,
-                error="Research record not found.",
-            )
-
-        # --------------------------------------------------
-        # 2. Load research record
-        # --------------------------------------------------
-
+    def publish(self, product_name: str) -> PublishResult:
         try:
-            data = json.loads(
-                file_path.read_text(
-                    encoding="utf-8"
-                )
-            )
-        except (json.JSONDecodeError, OSError) as exc:
-            return PublishResult(
-                success=False,
-                product_name=product_name,
-                error=f"Failed to read research record: {exc}",
-            )
-
-        # --------------------------------------------------
-        # 3. Prevent duplicate publication
-        # --------------------------------------------------
+            data = self.store.load(product_name)
+        except FileNotFoundError:
+            return PublishResult(False, product_name, error="Research record not found.")
 
         if data.get("published") is True:
             return PublishResult(
-                success=False,
-                product_name=product_name,
-                published=False,
+                False,
+                product_name,
                 already_published=True,
                 error="Item has already been published.",
             )
 
-        # --------------------------------------------------
-        # 4. Check Publish Gate
-        # --------------------------------------------------
-
         if not self.gate.can_publish(product_name):
-            return PublishResult(
-                success=False,
-                product_name=product_name,
-                published=False,
-                error="Publish rejected by Publish Gate.",
-            )
-
-        # --------------------------------------------------
-        # 5. Build Astro content
-        # --------------------------------------------------
+            return PublishResult(False, product_name, error="Publish rejected by Publish Gate.")
 
         try:
-            from Agents.Contracts.research import (
-                ResearchPackage,
-                ResearchStatus,
-                ReviewStatus,
-                SourceEvidence,
+            research = self._to_package(data)
+            content_file = self.content_builder.build(research)
+            published_at = datetime.now(timezone.utc).isoformat()
+            publication_id = (
+                f"{self.store._safe_filename(product_name)}-"
+                f"{int(datetime.now(timezone.utc).timestamp())}"
             )
 
-            sources = [
-                SourceEvidence(
-                    url=source.get("url", ""),
-                    title=source.get("title", ""),
-                    source_type=source.get(
-                        "source_type",
-                        "unknown",
-                    ),
-                    excerpt=source.get("excerpt"),
-                    reliability_score=source.get(
-                        "reliability_score"
-                    ),
-                )
-                for source in data.get(
-                    "sources",
-                    [],
-                )
-                if isinstance(source, dict)
-            ]
-
-            research = ResearchPackage(
-                product_name=data.get(
-                    "product_name",
-                    product_name,
-                ),
-                product_url=data.get(
-                    "product_url",
-                    "",
-                ),
-                status=ResearchStatus(
-                    data.get(
-                        "status",
-                        ResearchStatus.COMPLETED.value,
-                    )
-                ),
-                sources=sources,
-                facts=data.get(
-                    "facts",
-                    [],
-                ),
-                pricing=data.get(
-                    "pricing",
-                    [],
-                ),
-                pros=data.get(
-                    "pros",
-                    [],
-                ),
-                cons=data.get(
-                    "cons",
-                    [],
-                ),
-                review_status=ReviewStatus(
-                    data.get(
-                        "review_status",
-                        ReviewStatus.APPROVED.value,
-                    )
-                ),
-                review_note=data.get(
-                    "review_note"
-                ),
+            data.update(
+                {
+                    "published": True,
+                    "published_at": published_at,
+                    "publication_id": publication_id,
+                    "publisher": self.name,
+                    "publisher_version": self.version,
+                    "content_file": str(content_file),
+                }
+            )
+            self.store._file_path(product_name).write_text(
+                json.dumps(data, ensure_ascii=False, indent=2),
+                encoding="utf-8",
             )
 
-            content_file = self.content_builder.build(
-                research
-            )
-
-        except Exception as exc:
             return PublishResult(
-                success=False,
+                success=True,
                 product_name=product_name,
-                published=False,
-                error=(
-                    "Content generation failed: "
-                    f"{exc}"
-                ),
+                published=True,
+                publication_id=publication_id,
+                published_at=published_at,
             )
+        except Exception as exc:
+            return PublishResult(False, product_name, error=f"Content generation failed: {exc}")
 
-        # --------------------------------------------------
-        # 6. Generate publication metadata
-        # --------------------------------------------------
+    def publish_approved(self) -> list[PublishResult]:
+        results = []
+        for record in self.queue.list_approved():
+            product_name = record.get("product_name")
+            if product_name:
+                results.append(self.publish(product_name))
+        return results
 
-        published_at = datetime.now(
-            timezone.utc
-        ).isoformat()
-
-        publication_id = (
-            f"{product_name.lower().replace(' ', '-')}"
-            f"-"
-            f"{int(datetime.now(timezone.utc).timestamp())}"
+    @staticmethod
+    def _to_package(data: dict) -> ResearchPackage:
+        sources = [
+            SourceEvidence(
+                url=source.get("url", ""),
+                title=source.get("title", ""),
+                source_type=source.get("source_type", "unknown"),
+                excerpt=source.get("excerpt"),
+                reliability_score=source.get("reliability_score"),
+            )
+            for source in data.get("sources", [])
+            if isinstance(source, dict)
+        ]
+        return ResearchPackage(
+            product_name=data.get("product_name", ""),
+            product_url=data.get("product_url", ""),
+            status=ResearchStatus(data.get("status", ResearchStatus.COMPLETED.value)),
+            sources=sources,
+            facts=data.get("facts", []),
+            pricing=data.get("pricing", []),
+            pros=data.get("pros", []),
+            cons=data.get("cons", []),
+            review_status=ReviewStatus(data.get("review_status", ReviewStatus.APPROVED.value)),
+            review_note=data.get("review_note"),
         )
-
-        # --------------------------------------------------
-        # 7. Mark research record as published
-        # --------------------------------------------------
-
-        data["published"] = True
-        data["published_at"] = published_at
-        data["publication_id"] = publication_id
-        data["publisher"] = self.name
-        data["publisher_version"] = self.version
-        data["content_file"] = str(content_file)
-
-        file_path.write_text(
-            json.dumps(
-                data,
-                ensure_ascii=False,
-                indent=2,
-            ),
-            encoding="utf-8",
-        )
-
-        # --------------------------------------------------
-        # 8. Return successful result
-        # --------------------------------------------------
-
-        return PublishResult(
-            success=True,
-            product_name=product_name,
-            published=True,
-            publication_id=publication_id,
-            published_at=published_at,
-        )
-
-
-if __name__ == "__main__":
-    pass
