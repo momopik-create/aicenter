@@ -1,5 +1,2 @@
-google-genai
-requests
-python-slugify
 requests>=2.32.0
 tavily-python
