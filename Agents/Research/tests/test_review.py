@@ -2,7 +2,7 @@ import json
 
 from Agents.Research.review import ResearchReview
 from Agents.Research.review_store import ReviewStore
-from Agents.Research.schema import ResearchResult, ResearchStatus
+from Agents.Contracts.research import ResearchPackage, ResearchStatus
 
 
 PRODUCT_NAME = "review_test_product"
@@ -11,9 +11,9 @@ PRODUCT_NAME = "review_test_product"
 def main():
     store = ReviewStore()
 
-    result = ResearchResult(
+    result = ResearchPackage(
         product_name=PRODUCT_NAME,
-        url="https://example.com",
+        product_url="https://example.com",
         status=ResearchStatus.COMPLETED,
         sources=[],
     )
