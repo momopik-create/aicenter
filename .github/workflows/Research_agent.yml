@@ -1,7 +1,12 @@
 name: Research Agent
 
 on:
+  schedule:
+    - cron: "0 6 * * *"
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   research:
@@ -9,10 +14,9 @@ jobs:
 
     env:
       TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
-      SEARCH_PROVIDER: ${{ secrets.SEARCH_PROVIDER }}
-      DECISION_PROVIDER: disabled
-      JEV_ENABLED: false
+      SEARCH_PROVIDER: tavily
       PYTHONPATH: ${{ github.workspace }}
+      RESEARCH_REVIEW_DIR: ${{ github.workspace }}/data/research_reviews
 
     steps:
       - name: Checkout repository
@@ -28,46 +32,56 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # Decision Agent
-
       - name: Test Decision Agent
-        run: |
-          python Agents/Decision/tests/test_decision.py
+        run: python Agents/Decision/tests/test_decision.py
 
-      # Research Agent
-
-      - name: Test Tavily Search
-        run: |
-          python Agents/Research/tests/test_tavily.py
-
-      - name: Test Research Pipeline
-        run: |
-          python Agents/Research/tests/test_pipeline.py
+      - name: Test Research Schema
+        run: python Agents/Research/tests/test_schema.py
 
       - name: Test Research Review
-        run: |
-          python Agents/Research/tests/test_review.py
+        run: python Agents/Research/tests/test_review.py
 
       - name: Test Review Queue
-        run: |
-          python Agents/Research/tests/test_review_queue.py
+        run: python Agents/Research/tests/test_review_queue.py
 
       - name: Test Publish Gate
-        run: |
-          python Agents/Research/tests/test_publish_gate.py
-
-      # Publisher Agent
+        run: python Agents/Research/tests/test_publish_gate.py
 
       - name: Test Publisher
-        run: |
-          python Agents/Publisher/tests/test_publisher.py
+        run: python Agents/Publisher/tests/test_publisher.py
 
       - name: Test Content Publish
-        run: |
-          python Agents/Publisher/tests/test_content_publish.py
-
-      # End-to-End
+        run: python Agents/Publisher/tests/test_content_publish.py
 
       - name: Test Research End-to-End
+        run: python Agents/Research/tests/test_end_to_end.py
+
+      - name: Run research for affiliate products
+        run: python scripts/research.py
+
+      - name: Show review queue
         run: |
-          python Agents/Research/tests/test_end_to_end.py
+          python - <<'PY'
+          from Agents.Research.review_queue import ReviewQueue
+
+          queue = ReviewQueue()
+
+          print("Pending reviews:")
+
+          for item in queue.list_pending():
+              print("-", item.get("product_name"))
+          PY
+
+      - name: Commit research records
+        run: |
+          git config user.name "Research Agent"
+          git config user.email "bot@github.com"
+
+          git add data/research_reviews/
+
+          if git diff --cached --quiet; then
+            echo "No research changes to commit."
+          else
+            git commit -m "research: update product evidence"
+            git push
+          fi
