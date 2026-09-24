@@ -18,4 +18,4 @@ class ResearchAgent:
             product_name=product_name,
             product_url=url,
             status=ResearchStatus.IN_PROGRESS,
-        )
+        ) 
