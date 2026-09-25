@@ -7,14 +7,14 @@
       "url": "https://en.wikipedia.org/wiki/Vultr",
       "title": "Vultr",
       "source_type": "website",
-      "excerpt": "Vultr is an American cloud computing company that provides cloud infrastructure and is headquartered in West Palm Beach, Florida. The company provides cloud",
+      "excerpt": "Vultr is an American cloud computing company that provides cloud infrastructure. It operates data centers in over 30 regions worldwide.",
       "reliability_score": null
     },
     {
-      "url": "https://www.crunchbase.com/organization/vultr-holdings-llc",
-      "title": "Vultr - Crunchbase Company Profile & Funding",
+      "url": "https://www.vultr.com/company/about-us",
+      "title": "About Vultr, A Global Cloud Service for You - Vultr.com",
       "source_type": "website",
-      "excerpt": "Vultr is an AI cloud infrastructure platform offering latest generation NVIDIA GPUs and AMD CPUs and GPUs across 32 worldwide regions. Founded 10 years ago,",
+      "excerpt": "Vultr, founded in 2014, is on a mission to empower developers and businesses by simplifying the deployment of infrastructure via its advanced cloud platform.",
       "reliability_score": null
     },
     {
@@ -25,24 +25,31 @@
       "reliability_score": null
     },
     {
-      "url": "https://www.trustpilot.com/review/vultr.com",
-      "title": "Read Customer Service Reviews of vultr.com",
-      "source_type": "website",
-      "excerpt": "Found in 2014, Vultr set out with a mission to empower developers and businesses by simplifying infrastructure deployment via its advanced, easy to use, and affordable cloud platform. Now, Vultr has 32 cloud data center locations located worldwide and supports over 1.5m+ customers in 185 countries with over 45m+ instances deployed. \n\n Vultr provides frictionless provisioning of public cloud, storage, single-tenant bare metal, cloud GPU, managed databases, managed Kubernetes, and more! [...] ## pretty good\npretty good\n\nuse their cheap vps as vpn setup for friends for long time.\n\nsetup is simple, billing is simple\n\ndid not have any issue whatsoever\n\nSeptember 1, 2026\n\nUnprompted review\n\nUseful\n\nShare\n\nImage 25: Vultr logo\n\nReply from Vultr\n\n6 days ago\n\nThank you for the great feedback! We’re glad to hear Vultr has been a reliable choice for your VPN setup over the years and that you’ve found the setup and billing processes simple and straightforward. [...] Useful\n\nShare\n\nImage 61: Vultr logo\n\nReply from Vultr\n\nJul 15, 2026\n\nThank you for taking the time to share your experience and thoughtful feedback.\n\nWe're delighted to hear that you've found Vultr to be a strong alternative to other cloud providers, and that our pricing, support, and features, such as free BGP, have delivered value for your workloads. It's especially rewarding to know that our support team has consistently been there when you've needed assistance.",
+      "url": "https://www.vultr.com/pricing",
+      "title": "More Cloud, Less Money.",
+      "source_type": "pricing",
+      "excerpt": "© Vultr 2026 | VULTR is a registered trademark of The Constant Company, LLC.\n\n- Terms of Service\n- AUP\n- DMCA\n- Report Abuse\n- Privacy Policy\n- Cookie Policy [...] Vultr Bare Metal provides direct access to the full power of the physical hardware, without a virtualization layer. The Vultr cloud platform delivers control of an actual, physical server, with the convenience and simplicity of Vultr automation and orchestration. Bare Metal servers are always single-tenant, which means that only you have access to the resources of your server. With Vultr Clusters, on-demand clusters of Bare Metal servers can be created and managed without manual requests or [...] Features\n\n  Data Center regions+ Vultr is available in 33 cloud data center regions\n\n  Advanced Network+ High speed public and private networking\n\n  Control Panel+ Expand and manage your infrastructure\n\n  Operating Systems+ Deploy instance with preferred OS\n\n  Upload ISO+ Upload your own operating system\n\n  Vultr Trust Center+ Check Vultr and Data Center compliances\n\n  Solutions",
       "reliability_score": null
     },
     {
-      "url": "https://www.g2.com/products/vultr/reviews",
-      "title": "Vultr Reviews 2026: Details, Pricing, & Features",
+      "url": "https://www.vultr.com/products/cloud-compute",
+      "title": "Cloud Compute On-Demand | Instant Deployment & Global ...",
       "source_type": "website",
-      "excerpt": "Vultr is on a mission to make high-performance cloud computing easy to use, affordable, and locally accessible for businesses and developers around the",
+      "excerpt": "### Company\n\n   Our Team\n   News\n   Brand Assets\n   Referral Program\n   Creator Program\n   Careers\n   SLA\n   Legal\n   Vultr Trust Center\n   Contact\n   Your Privacy Choices\n   Subprocessors\n   Accessibility\n\n   Contact Sales\n   Log in\n   Sign up\n\nImage 38: Vultr XImage 39: Vultr FacebookImage 40: Vultr YouTubeImage 41: Vultr LinkedInImage 42: Vultr GitHubImage 43: Vultr Stack Overflow\n\n© Vultr 2026 | VULTR is a registered trademark of The Constant Company, LLC. [...] Vultr Cloud Compute offers both Intel and AMD-based virtual machines. For compute-intensive tasks like compiling, ML inference, or database operations, AMD EPYC-based instances deliver higher core performance and memory bandwidth. At the same time, Intel-based VMs are ideal for legacy application compatibility and mixed-use workloads. Benchmarking tools like Geekbench or sysbench can help determine the best architecture for specific performance goals. [...] Vultr Cloud Compute puts global developers and businesses in the driver’s seat, providing on-demand enterprise-grade cloud computing at industry-leading price-to-performance. Easily deploy and scale shared or dedicated virtual machines (VMs) and bare metal across six continents, paying only for what you use.\n\nImage 1: Resource cover image\n\nRead now\n\nDevelop, deploy, and optimize\n\n## Cloud-native applications that run every aspect of your business",
       "reliability_score": null
     },
     {
-      "url": "https://www.reddit.com/r/selfhosted/comments/1bouuv7/warning_vultr_a_major_cloud_provider_is_now",
-      "title": "Warning: Vultr (a major cloud provider) is now claiming full ...",
+      "url": "https://www.vultr.com/products/bare-metal",
+      "title": "Vultr Bare Metal Single-Tenant Dedicated Servers",
       "source_type": "website",
-      "excerpt": "> You hereby grant to Vultr a non-exclusive, perpetual, irrevocable, royalty-free, fully paid-up, worldwide license (including the right to sublicense through multiple tiers) to use, reproduce, process, adapt, publicly perform, publicly display, modify, prepare derivative works, publish, transmit and distribute each of your User Content, or any portion thereof, in any form, medium or distribution method now known or hereafter existing, known or developed, and otherwise use and commercialize the [...] > information, text, opinions, messages, comments, audio visual works, motion pictures, photographs, animation, videos, graphics, sounds, music, software, Apps, and any other content or material that You or your end users submit, upload, post, host, store, or otherwise make available (“Make Available”) on or through the Services (collectively, “Your Content,” “Content” or “User Content”).\n\n> ... [...] to use, reproduce, process, adapt, publicly perform, publicly display, modify, prepare derivative works, publish, transmit and distribute each of your User Content, or any portion thereof, in any form, medium or distribution method now known or hereafter existing, known or developed, and otherwise use and commercialize the User Content in any way that Vultr deems appropriate, without any further consent, notice and/or compensation to you or to any third parties, for purposes of providing the",
+      "excerpt": "Vultr Bare Metal provides dedicated single-tenant infrastructure for high-demand workloads like AI/ML, data analytics, and rendering.",
+      "reliability_score": null
+    },
+    {
+      "url": "https://www.vultr.com/cloudalliance/run-ai",
+      "title": "Run.ai is part of Vultr Cloud Alliance | Vultr.com - Vultr.com",
+      "source_type": "website",
+      "excerpt": "### Marketplace\n\n### Resources\n\n### Company\n\nVultr X\nVultr Facebook\nVultr YouTube\nVultr LinkedIn\nVultr GitHub\nVultr Stack Overflow\n\n© Vultr 2026 | VULTR is a registered trademark of The Constant Company, LLC. [...] Speed up AI initiatives with integrated tools and optimized infrastructure from Run:ai and Vultr, simplifying development processes.\n\n## Maximize your AI strategy with Run:ai and Vultr\n\nSave significantly on cloud spend with Vultr's cost-effective solutions, paired with Run:ai's efficient AI workload orchestration platform. This combination delivers exceptional price-to-performance ratios and maximizes ROI for scalable AI/ML operations, benefiting enterprises across various industry verticals. [...] Utilize combined resources for big data analytics. Process and analyze vast amounts of data quickly and efficiently, driving insights and decision-making.\n\n## Vultr Cloud Alliance  infrastructure stack\n\nAchieve top-tier performance for AI/ML applications with Vultr's cloud infrastructure, Console Connect private network, DDN storage, Qdrant vector database, and Run:ai orchestration.\n\n## Orchestrate AI/ML applications on Vultr\n\nVULTR\n\n### Products\n\n### Features\n\n### Solutions\n\n### Marketplace",
       "reliability_score": null
     },
     {
@@ -51,19 +58,21 @@
       "source_type": "website",
       "excerpt": "Streamline your Vultr experience with AI Powered Assistance and intuitive cloud resource composition. Vultr Agent lets you chat with our docs to explore",
       "reliability_score": null
-    },
-    {
-      "url": "https://x.com/Vultr",
-      "title": "Vultr",
-      "source_type": "website",
-      "excerpt": "Log inSign up\n\nLog inSign up\n\nVultr profile banner\n\n@Vultr\n\n# Vultr\n\n@Vultr\n\nEasily deploy cloud servers, Bare Metal, Cloud GPU, Storage, Managed Kubernetes, and Managed Databases worldwide. Support: vultr.com/support/\n\n32+ data centers worldwide\n\nvultr.com\n\nJoined February 2014\n\n194\n\nFollowing122.6K\n\nFollowers\n\nRepliesRepliesRepostsRepostsMediaMedia\n\n @Vultr\n\n  Vultr@Vultr\n\n  3h [...] Sep 17\n\n  We’re heading to Singapore for Cloud & AI Infrastructure Asia at Tech Week Singapore, September 29–30! Visit the Vultr booth to connect with our team and hear from our speakers on the technologies shaping the future of cloud and AI infrastructure. See you at there! [...] Sep 17\n\n  @CyclePlatform's new MCP server brings natural language infrastructure management to Vultr. Connect AI assistants and coding tools to monitor workloads, troubleshoot issues, search logs, and take approved infrastructure actions. blogs.vultr.com/cycle-io-mcp-s…\n\n  \n\n  1\n @Vultr\n\n  Vultr@Vultr\n\n  Sep 17",
-      "reliability_score": null
     }
   ],
-  "facts": [],
+  "facts": [
+    "Vultr was founded in 2014 and is headquartered in West Palm Beach, Florida.",
+    "Vultr is a registered trademark of The Constant Company, LLC.",
+    "Vultr is an American cloud computing company providing cloud infrastructure across 185 countries.",
+    "Vultr is available in 33 cloud data center regions across six continents."
+  ],
   "pricing": [],
-  "pros": [],
+  "pros": [
+    "Pay-as-you-go model where users pay only for what they use.",
+    "On-demand clusters of Bare Metal servers can be provisioned without manual intervention.",
+    "Extensive global footprint spanning 33 data center regions across six continents."
+  ],
   "cons": [],
   "review_status": "pending",
-  "review_note": null
+  "review_note": "Extracted 4 facts, 0 pricing records, 9 features."
 }
