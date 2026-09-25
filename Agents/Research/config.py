@@ -11,7 +11,7 @@ class ResearchConfig:
     MAX_FETCHED_SOURCES = int(os.getenv("RESEARCH_MAX_FETCHED_SOURCES", "8"))
     MAX_EXCERPT_LENGTH = int(os.getenv("RESEARCH_MAX_EXCERPT_LENGTH", "4000"))
 
-    GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+    GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.8-flash")
     GEMINI_MAX_OUTPUT_TOKENS = int(
         os.getenv("GEMINI_MAX_OUTPUT_TOKENS", "4096")
     )
