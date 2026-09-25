@@ -12,6 +12,14 @@ class ResearchConfig:
     MAX_EXCERPT_LENGTH = int(os.getenv("RESEARCH_MAX_EXCERPT_LENGTH", "4000"))
 
     GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.8-flash")
+    GEMINI_FALLBACK_MODELS = [
+        model.strip()
+        for model in os.getenv(
+            "GEMINI_FALLBACK_MODELS",
+            "gemini-3.7-flash",
+        ).split(",")
+        if model.strip()
+    ]
     GEMINI_MAX_OUTPUT_TOKENS = int(
         os.getenv("GEMINI_MAX_OUTPUT_TOKENS", "4096")
     )

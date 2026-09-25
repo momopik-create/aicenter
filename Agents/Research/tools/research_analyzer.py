@@ -39,6 +39,13 @@ class ResearchAnalyzer:
     ):
         self._client = client
         self.model = model or ResearchConfig.GEMINI_MODEL
+        self.models = [
+            self.model,
+            *[
+                m for m in ResearchConfig.GEMINI_FALLBACK_MODELS
+                if m != self.model
+            ],
+        ]
         self.max_retries = max_retries
         self.base_delay = base_delay
 
@@ -115,45 +122,53 @@ class ResearchAnalyzer:
     def _generate_with_retry(self, prompt: str):
         last_error = None
 
-        for attempt in range(1, self.max_retries + 1):
-            try:
-                return self.client.models.generate_content(
-                    model=self.model,
-                    contents=prompt,
-                    config={
-                        "temperature": 0.1,
-                        "max_output_tokens": (
-                            ResearchConfig.GEMINI_MAX_OUTPUT_TOKENS
-                        ),
-                        "response_mime_type": "application/json",
-                    },
-                )
+        for model in self.models:
+            print(f"Trying Gemini model: {model}")
 
-            except Exception as exc:
-                last_error = exc
-                message = str(exc)
+            for attempt in range(1, self.max_retries + 1):
+                try:
+                    return self.client.models.generate_content(
+                        model=model,
+                        contents=prompt,
+                        config={
+                            "temperature": 0.1,
+                            "max_output_tokens": (
+                                ResearchConfig.GEMINI_MAX_OUTPUT_TOKENS
+                            ),
+                            "response_mime_type": "application/json",
+                        },
+                    )
 
-                if not self._is_retryable(message):
-                    raise
+                except Exception as exc:
+                    last_error = exc
+                    message = str(exc)
 
-                if attempt >= self.max_retries:
-                    raise RuntimeError(
-                        f"Gemini failed after {self.max_retries} attempts: "
-                        f"{message}"
-                    ) from exc
+                    if not self._is_retryable(message):
+                        raise
 
-                delay = self.base_delay * (2 ** (attempt - 1))
-                delay += random.uniform(0, 2)
+                    if attempt < self.max_retries:
+                        delay = self.base_delay * (2 ** (attempt - 1))
+                        delay += random.uniform(0, 2)
 
-                print(
-                    f"Gemini temporary error on attempt "
-                    f"{attempt}/{self.max_retries}: {message}"
-                )
-                print(f"Retrying in {delay:.1f}s...")
+                        print(
+                            f"Gemini temporary error on {model}, "
+                            f"attempt {attempt}/{self.max_retries}: {message}"
+                        )
+                        print(f"Retrying in {delay:.1f}s...")
 
-                time.sleep(delay)
+                        time.sleep(delay)
+                    else:
+                        print(
+                            f"Model {model} failed after "
+                            f"{self.max_retries} attempts."
+                        )
 
-        raise RuntimeError(str(last_error))
+            if model != self.models[-1]:
+                print("Trying fallback Gemini model...")
+
+        raise RuntimeError(
+            f"All Gemini models failed. Last error: {last_error}"
+        )
 
     @classmethod
     def _is_retryable(cls, message: str) -> bool:
