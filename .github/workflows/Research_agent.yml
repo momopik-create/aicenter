@@ -4,6 +4,17 @@ on:
   schedule:
     - cron: "0 6 * * *"
   workflow_dispatch:
+    inputs:
+      product:
+        description: "Product key from affiliates.json (leave empty for the normal batch)"
+        required: false
+        type: string
+        default: ""
+      force_research:
+        description: "Research an existing product even if it already has content/review data"
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -17,6 +28,8 @@ jobs:
       SEARCH_PROVIDER: tavily
       PYTHONPATH: ${{ github.workspace }}
       RESEARCH_REVIEW_DIR: ${{ github.workspace }}/data/research_reviews
+      RESEARCH_PRODUCT: ${{ inputs.product }}
+      FORCE_RESEARCH: ${{ inputs.force_research }}
 
     steps:
       - name: Checkout repository
@@ -56,6 +69,9 @@ jobs:
       - name: Test Research End-to-End
         run: python Agents/Research/tests/test_end_to_end.py
 
+      - name: Test Research Script Targeting
+        run: python Agents/Research/tests/test_research_script.py
+
       - name: Run research for affiliate products
         run: python scripts/research.py
 
@@ -64,19 +80,15 @@ jobs:
           python - <<'PY'
           from Agents.Research.review_queue import ReviewQueue
 
-          queue = ReviewQueue()
-
           print("Pending reviews:")
-
-          for item in queue.list_pending():
-              print("-", item.get("product_name"))
+          for item in ReviewQueue().list_pending():
+              print(f"- {item.get('product_name')}: {len(item.get('sources', []))} sources")
           PY
 
       - name: Commit research records
         run: |
           git config user.name "Research Agent"
           git config user.email "bot@github.com"
-
           git add data/research_reviews/
 
           if git diff --cached --quiet; then

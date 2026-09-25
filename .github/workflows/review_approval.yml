@@ -1,0 +1,79 @@
+name: Review Approval
+
+on:
+  workflow_dispatch:
+    inputs:
+      product:
+        description: "Product key from the research review queue"
+        required: true
+        type: string
+      decision:
+        description: "Review decision"
+        required: true
+        type: choice
+        options:
+          - approved
+          - rejected
+          - pending
+          - needs_revision
+        default: approved
+      note:
+        description: "Optional review note"
+        required: false
+        type: string
+        default: ""
+
+permissions:
+  contents: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONPATH: ${{ github.workspace }}
+      RESEARCH_REVIEW_DIR: ${{ github.workspace }}/data/research_reviews
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Apply review decision
+        env:
+          PRODUCT: ${{ inputs.product }}
+          DECISION: ${{ inputs.decision }}
+          NOTE: ${{ inputs.note }}
+        run: |
+          python - <<'PY'
+          import os
+          from Agents.Research.review import ResearchReview
+          from Agents.Research.review_store import ReviewStore
+          from Agents.Contracts.research import ReviewStatus
+
+          product = os.environ["PRODUCT"].strip()
+          decision = os.environ["DECISION"].strip()
+          note = os.environ.get("NOTE", "").strip() or None
+
+          ReviewStore().load(product)  # fail clearly if the record does not exist
+          status = ReviewStatus(decision)
+          path = ResearchReview()._set_status(product, status, note)
+          print(f"Updated {product}: {status.value}")
+          print(f"Review file: {path}")
+          PY
+
+      - name: Commit review decision
+        run: |
+          git config user.name "Review Agent"
+          git config user.email "bot@github.com"
+          git add data/research_reviews/
+
+          if git diff --cached --quiet; then
+            echo "No review changes to commit."
+          else
+            git commit -m "review: ${{ inputs.decision }} ${{ inputs.product }}"
+            git push
+          fi

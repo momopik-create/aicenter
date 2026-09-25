@@ -2,10 +2,7 @@ name: Auto Content Publisher
 
 on:
   schedule:
-    # Every day at 08:00 UTC
     - cron: "0 8 * * *"
-
-  # Allow manual execution
   workflow_dispatch:
 
 permissions:
@@ -14,99 +11,48 @@ permissions:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    env:
+      PYTHONPATH: ${{ github.workspace }}
+      RESEARCH_REVIEW_DIR: ${{ github.workspace }}/data/research_reviews
 
     steps:
-      # --------------------------------------------------
-      # 1. Checkout repository
-      # --------------------------------------------------
-
-      - name: Checkout Code
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      # --------------------------------------------------
-      # 2. Setup Python
-      # --------------------------------------------------
-
-      - name: Set up Python
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: "3.12"
 
-      # --------------------------------------------------
-      # 3. Install dependencies
-      # --------------------------------------------------
-
-      - name: Install Dependencies
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # --------------------------------------------------
-      # 4. Run Publisher tests
-      # --------------------------------------------------
-
-      - name: Run Content Builder Test
-        env:
-          PYTHONPATH: ${{ github.workspace }}
+      - name: Run publisher tests
         run: |
           python Agents/Publisher/tests/test_content_publish.py
-
-      - name: Run Publisher Agent Test
-        env:
-          PYTHONPATH: ${{ github.workspace }}
-        run: |
           python Agents/Publisher/tests/test_publisher.py
 
-      # --------------------------------------------------
-      # 5. Generate content
-      # --------------------------------------------------
+      - name: Publish approved research
+        run: python scripts/publish.py
 
-      - name: Run AI Review Generator
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          PYTHONPATH: ${{ github.workspace }}
+      - name: Verify generated content
         run: |
-          python scripts/main.py
-
-      # --------------------------------------------------
-      # 6. Verify generated content
-      # --------------------------------------------------
-
-      - name: Verify Generated Content
-        run: |
-          echo "Checking generated Astro content..."
-
-          if [ ! -d "src/content/products" ]; then
-            echo "ERROR: src/content/products directory does not exist."
-            exit 1
-          fi
-
-          echo "Generated files:"
+          test -d src/content/products
           find src/content/products -type f -name "*.md" -print
 
-          if ! find src/content/products -type f -name "*.md" | grep -q .; then
-            echo "ERROR: No Markdown content was generated."
-            exit 1
-          fi
-
-          echo "Generated content verified."
-
-      # --------------------------------------------------
-      # 7. Commit generated content
-      # --------------------------------------------------
-
-      - name: Commit and Push Changes
+      - name: Commit and push published content
         run: |
-          git config user.name "Auto-Publisher"
+          git config user.name "Auto Publisher"
           git config user.email "bot@github.com"
-
-          git add src/content/products/
+          git add src/content/products/ data/research_reviews/
 
           if git diff --cached --quiet; then
-            echo "No new content changes to commit."
+            echo "No publication changes to commit."
           else
-            git commit -m "auto: generate new product review"
+            git commit -m "auto: publish approved product research"
             git push
           fi
