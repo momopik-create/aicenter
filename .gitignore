@@ -1,1 +1,7 @@
 Agents/Research/reviews/
+.astro/
+dist/
+node_modules/
+*.zip
+__pycache__/
+*.pyc

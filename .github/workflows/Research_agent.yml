@@ -25,6 +25,7 @@ jobs:
 
     env:
       TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       SEARCH_PROVIDER: tavily
       PYTHONPATH: ${{ github.workspace }}
       RESEARCH_REVIEW_DIR: ${{ github.workspace }}/data/research_reviews
@@ -65,6 +66,9 @@ jobs:
 
       - name: Test Content Publish
         run: python Agents/Publisher/tests/test_content_publish.py
+
+      - name: Test Research Analyzer
+        run: python Agents/Research/tests/test_research_analyzer.py
 
       - name: Test Research End-to-End
         run: python Agents/Research/tests/test_end_to_end.py

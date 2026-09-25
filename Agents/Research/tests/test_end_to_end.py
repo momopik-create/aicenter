@@ -10,6 +10,17 @@ from Agents.Contracts.research import ReviewStatus
 from Agents.Publisher.agent import PublisherAgent
 
 
+class FakeAnalyzer:
+    def analyze(self, product_name, product_url, sources):
+        return {
+            "facts": ["Official fact"],
+            "pricing": [{"plan": "Basic", "price": "$5"}],
+            "features": ["Feature"],
+            "pros": ["Pro"],
+            "cons": ["Con"],
+        }
+
+
 class FakeSearchProvider:
     def search(self, query, max_results=10):
         return SearchResponse(
@@ -54,6 +65,7 @@ def main():
     pipeline = ResearchPipeline(
         search_tool=FakeSearchProvider(),
         store=ReviewStore(directory="/tmp/aicenter-e2e"),
+        analyzer=FakeAnalyzer(),
     )
 
     result = pipeline.run(research_input)
