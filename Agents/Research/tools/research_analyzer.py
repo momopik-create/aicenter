@@ -116,8 +116,150 @@ class ResearchAnalyzer:
             )
 
         data = self._parse_json(text)
+        result = self._normalize(data)
 
-        return self._normalize(data)
+        # Pricing gets a dedicated extraction pass because pricing data
+        # is often buried in long vendor pages and should not depend on
+        # the general fact-extraction response.
+        result["pricing"] = self._extract_pricing(
+            product_name=product_name,
+            product_url=product_url,
+            evidence=evidence,
+            existing_pricing=result.get("pricing", []),
+        )
+
+        return result
+
+    def _extract_pricing(
+        self,
+        product_name: str,
+        product_url: str,
+        evidence: list[dict],
+        existing_pricing: list[dict],
+    ) -> list[dict]:
+
+        if existing_pricing:
+            return existing_pricing
+
+        prompt = self._build_pricing_prompt(
+            product_name,
+            product_url,
+            evidence,
+        )
+
+        response = self._generate_with_retry(prompt)
+
+        text = getattr(response, "text", None)
+
+        if not text:
+            return []
+
+        try:
+            data = self._parse_json(text)
+        except RuntimeError:
+            return []
+
+        return self._normalize_pricing(
+            data.get("pricing", [])
+        )
+
+    @staticmethod
+    def _build_pricing_prompt(
+        product_name: str,
+        product_url: str,
+        evidence: list[dict],
+    ) -> str:
+
+        evidence_text = json.dumps(
+            evidence,
+            ensure_ascii=False,
+            indent=2,
+        )
+
+        return f"""
+You are the pricing extraction stage of an affiliate research engine.
+
+Product: {product_name}
+Product URL: {product_url}
+
+Your ONLY task is to extract pricing information explicitly supported
+by the supplied source evidence.
+
+Search carefully for:
+- plan names
+- starting prices
+- exact prices
+- currency
+- monthly/yearly/hourly billing
+- free tiers
+- minimum charges
+- relevant pricing conditions
+
+Do NOT invent or estimate prices.
+
+If the evidence does not contain pricing, return an empty pricing array.
+
+Every pricing record MUST include the source_ids that support it.
+
+Return ONLY valid JSON:
+
+{{
+  "pricing": [
+    {{
+      "plan": "plan name",
+      "price": "exact price as stated",
+      "currency": "USD",
+      "billing_period": "monthly",
+      "details": "important pricing condition",
+      "source_ids": ["S1"]
+    }}
+  ]
+}}
+
+Evidence:
+
+{evidence_text}
+""".strip()
+
+    @staticmethod
+    def _normalize_pricing(items: list) -> list[dict]:
+
+        pricing = []
+
+        for item in items or []:
+
+            if not isinstance(item, dict):
+                continue
+
+            plan = str(item.get("plan", "")).strip()
+            price = str(item.get("price", "")).strip()
+
+            if not plan and not price:
+                continue
+
+            source_ids = item.get("source_ids", []) or []
+
+            if isinstance(source_ids, str):
+                source_ids = [source_ids]
+
+            pricing.append(
+                {
+                    "plan": plan,
+                    "price": price,
+                    "currency": str(
+                        item.get("currency", "")
+                    ).strip(),
+                    "billing_period": str(
+                        item.get("billing_period", "")
+                    ).strip(),
+                    "details": str(
+                        item.get("details", "")
+                    ).strip(),
+                    "source_ids": source_ids,
+                }
+            )
+
+        return pricing
 
     def _generate_with_retry(self, prompt: str):
         last_error = None
