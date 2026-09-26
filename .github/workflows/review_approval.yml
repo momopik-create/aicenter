@@ -83,21 +83,9 @@ jobs:
             git commit -m "review: ${{ inputs.decision }} ${{ inputs.product }}"
             git push
           fi
-<<<<<<< ours
-          
       - name: Trigger publisher
         if: ${{ inputs.decision == 'approved' }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh workflow run auto_publish.yml --ref main
-=======
-
-
-  - name: Trigger publisher
-    if: ${{ inputs.decision == 'approved' }}
-    env:
-      GH_TOKEN: ${{ github.token }}
-    run: |
-      gh workflow run auto_publish.yml --ref main
->>>>>>> theirs
