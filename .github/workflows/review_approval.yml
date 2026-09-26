@@ -26,7 +26,12 @@ on:
 permissions:
   contents: write
   actions: write
-  
+      - name: Trigger publisher
+        if: ${{ inputs.decision == 'approved' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh workflow run auto_publish.yml --ref main
 jobs:
   review:
     runs-on: ubuntu-latest
@@ -78,6 +83,7 @@ jobs:
             git commit -m "review: ${{ inputs.decision }} ${{ inputs.product }}"
             git push
           fi
+<<<<<<< ours
           
       - name: Trigger publisher
         if: ${{ inputs.decision == 'approved' }}
@@ -85,3 +91,13 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh workflow run auto_publish.yml --ref main
+=======
+
+
+  - name: Trigger publisher
+    if: ${{ inputs.decision == 'approved' }}
+    env:
+      GH_TOKEN: ${{ github.token }}
+    run: |
+      gh workflow run auto_publish.yml --ref main
+>>>>>>> theirs
