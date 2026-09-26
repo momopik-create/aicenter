@@ -106,29 +106,44 @@ class ResearchAnalyzer:
             evidence,
         )
 
-        response = self._generate_with_retry(prompt)
+        try:
+            response = self._generate_with_retry(prompt)
 
-        text = getattr(response, "text", None)
+            text = getattr(response, "text", None)
 
-        if not text:
-            raise RuntimeError(
-                "Gemini returned an empty analysis response."
+            if not text:
+                raise RuntimeError(
+                    "Gemini returned an empty analysis response."
+                )
+
+            data = self._parse_json(text)
+            result = self._normalize(data)
+
+            # Pricing gets a dedicated extraction pass.
+            try:
+                result["pricing"] = self._extract_pricing(
+                    product_name=product_name,
+                    product_url=product_url,
+                    evidence=evidence,
+                    existing_pricing=result.get("pricing", []),
+                )
+            except Exception as exc:
+                print(
+                    f"Gemini pricing extraction unavailable; "
+                    f"using deterministic fallback: {exc}"
+                )
+                result["pricing"] = self._deterministic_pricing(
+                    evidence
+                )
+
+            return result
+
+        except Exception as exc:
+            print(
+                f"Gemini analysis unavailable; "
+                f"using deterministic evidence fallback: {exc}"
             )
-
-        data = self._parse_json(text)
-        result = self._normalize(data)
-
-        # Pricing gets a dedicated extraction pass because pricing data
-        # is often buried in long vendor pages and should not depend on
-        # the general fact-extraction response.
-        result["pricing"] = self._extract_pricing(
-            product_name=product_name,
-            product_url=product_url,
-            evidence=evidence,
-            existing_pricing=result.get("pricing", []),
-        )
-
-        return result
+            return self._deterministic_extract(evidence)
 
     def _extract_pricing(
         self,
@@ -260,6 +275,160 @@ Evidence:
             )
 
         return pricing
+
+    @classmethod
+    def _deterministic_extract(
+        cls,
+        evidence: list[dict],
+    ) -> dict[str, Any]:
+        """
+        Evidence-only fallback used when Gemini is unavailable.
+
+        No new claims are generated. Facts are copied from source
+        excerpts and pricing is extracted only when an explicit price
+        expression exists in the source text.
+        """
+        facts = []
+
+        for item in evidence:
+            source_id = item.get("id", "")
+            excerpt = str(item.get("excerpt", "")).strip()
+
+            if not excerpt:
+                continue
+
+            sentences = re.split(
+                r"(?<=[.!?])\\s+",
+                excerpt,
+            )
+
+            for sentence in sentences:
+                sentence = sentence.strip()
+
+                if len(sentence) < 30:
+                    continue
+
+                facts.append(
+                    f"[{source_id}] {sentence}"
+                )
+
+                if len(facts) >= 8:
+                    break
+
+            if len(facts) >= 8:
+                break
+
+        return {
+            "facts": facts,
+            "pricing": cls._deterministic_pricing(evidence),
+            "features": [],
+            "pros": [],
+            "cons": [],
+        }
+
+    @classmethod
+    def _deterministic_pricing(
+        cls,
+        evidence: list[dict],
+    ) -> list[dict]:
+        """Extract only explicitly stated prices from source evidence."""
+
+        results = []
+        seen = set()
+
+        price_pattern = re.compile(
+            r"(?:US\$|\$|€|£)\s*\d+(?:[.,]\d+)?"
+            r"|"
+            r"\d+(?:[.,]\d+)?\s*(?:USD|EUR|GBP|TRY|TL)",
+            re.IGNORECASE,
+        )
+
+        for item in evidence:
+            source_id = item.get("id", "")
+            excerpt = str(item.get("excerpt", "")).strip()
+
+            if not excerpt:
+                continue
+
+            for sentence in re.split(r"(?<=[.!?])\s+", excerpt):
+                sentence = sentence.strip()
+
+                if not sentence:
+                    continue
+
+                match = price_pattern.search(sentence)
+
+                if not match:
+                    continue
+
+                raw_price = match.group(0).strip()
+                upper = raw_price.upper()
+
+                if "$" in raw_price or "USD" in upper:
+                    currency = "USD"
+                elif "€" in raw_price or "EUR" in upper:
+                    currency = "EUR"
+                elif "£" in raw_price or "GBP" in upper:
+                    currency = "GBP"
+                elif "TRY" in upper or "TL" in upper:
+                    currency = "TRY"
+                else:
+                    currency = ""
+
+                lower = sentence.lower()
+
+                if re.search(r"\b(per\s+month|monthly|month)\b", lower):
+                    billing_period = "monthly"
+                elif re.search(
+                    r"\b(per\s+year|yearly|annual|annually|year)\b",
+                    lower,
+                ):
+                    billing_period = "yearly"
+                elif re.search(
+                    r"\b(per\s+hour|hourly|hour)\b",
+                    lower,
+                ):
+                    billing_period = "hourly"
+                elif re.search(
+                    r"\b(per\s+day|daily|day)\b",
+                    lower,
+                ):
+                    billing_period = "daily"
+                else:
+                    billing_period = ""
+
+                plan = ""
+
+                plan_match = re.search(
+                    r"\b(?:the\s+)?"
+                    r"([A-Za-z0-9][A-Za-z0-9&+._-]{0,30})"
+                    r"\s+(?:plan|tier)\b",
+                    sentence,
+                    re.IGNORECASE,
+                )
+
+                if plan_match:
+                    plan = plan_match.group(1).strip()
+
+                key = (source_id, raw_price, sentence)
+
+                if key in seen:
+                    continue
+
+                seen.add(key)
+
+                results.append(
+                    {
+                        "plan": plan,
+                        "price": raw_price,
+                        "currency": currency,
+                        "billing_period": billing_period,
+                        "details": sentence,
+                        "source_ids": [source_id],
+                    }
+                )
+
+        return results
 
     def _generate_with_retry(self, prompt: str):
         last_error = None
