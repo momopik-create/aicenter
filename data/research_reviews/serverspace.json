@@ -80,5 +80,11 @@
     "Additional IPv4 addresses require an extra fee, and free blocks may temporarily run out."
   ],
   "review_status": "approved",
-  "review_note": null
+  "review_note": null,
+  "published": true,
+  "published_at": "2026-09-26T16:47:53.320755+00:00",
+  "publication_id": "serverspace-1790441273",
+  "publisher": "publisher",
+  "publisher_version": "1.0.0",
+  "content_file": "/home/runner/work/aicenter/aicenter/src/content/products/serverspace.md"
 }
