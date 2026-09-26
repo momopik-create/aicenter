@@ -12,7 +12,11 @@ class ReviewQueue:
         return self._list_by_status("pending")
 
     def list_approved(self):
-        return self._list_by_status("approved")
+        return [
+            item
+            for item in self._list_by_status("approved")
+            if item.get("published") is not True
+        ]
 
     def list_rejected(self):
         return self._list_by_status("rejected")
