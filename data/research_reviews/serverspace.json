@@ -79,6 +79,6 @@
     "Basic backups are not included in the standard VPS cost and require a separate fee.",
     "Additional IPv4 addresses require an extra fee, and free blocks may temporarily run out."
   ],
-  "review_status": "pending",
-  "review_note": "Extracted 5 facts, 0 pricing records, 10 features."
+  "review_status": "approved",
+  "review_note": null
 }
