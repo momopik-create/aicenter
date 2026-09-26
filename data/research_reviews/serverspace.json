@@ -5,9 +5,16 @@
   "sources": [
     {
       "url": "https://www.linkedin.com/company/serverspace",
-      "title": "Serverspace - Automated, simple, and affordable cloud infrastructure to everyone.",
+      "title": "Serverspace",
       "source_type": "website",
       "excerpt": "Serverspace is an international cloud provider offering automated virtual infrastructure deployment. Linux or Windows-based servers get available from anywhere across the globe in less than a minute, and the services are charged every ten minutes so clients pay only for the actual time they use their virtual machines. The provider offers virtual infrastructure management as a service, providing server administration regardless of their complexity. API and CLI open tools are also available for [...] also available for client services integration. Serverspace owns server equipment in the largest Data Centers of the U.S., Europe, Russia, etc., and operates within the ITGLOBAL.COM Group of Companies, the international provider of IT services and products. [...] # Serverspace\nAutomated, simple, and affordable cloud infrastructure to everyone.\nTechnology, Information and Internet • Amsterdam, North Holland • 235 followers • 51-200 employees",
+      "reliability_score": null
+    },
+    {
+      "url": "https://pq.hosting/en/providers/serverspace",
+      "title": "Serverspace Hosting Provider - Reviews and Rating of ...",
+      "source_type": "website",
+      "excerpt": "PQ.Hosting\n\nPQ.Hosting\n\nServerspace\n\n# Hosting Provider Serverspace\n\nNL Netherlands\n\n5.0\n\n1 review\n\nServerspace is a European cloud provider. The company's services are focused on standard infrastructure tasks: websites and web applications, services with databases, test environments, and small corporate projects.\n\nSecurity [...] Data Centers\n\nServerspace's geography covers seven countries: the Netherlands, the USA, Kazakhstan, Canada, Turkey, the UAE, and Brazil. In terms of reliability, they correspond to Tier III, which ensures stable operation of cloud services and minimizes downtime.\n\nAdvantages\n\n hourly billing and instant resource changes without a reboot;\n DDoS filter up to 10 Gbps is already included in the price;\n\n the ability to stop the server and pay only for disk/IP;\n there is a trial period. [...] Disadvantages\n\n basic backups are not included in the VPS cost and require a separate option;\n additional IPv4 is provided for an extra fee, and free blocks may temporarily run out.\n\nTechnologies Used\n\nServerspace uses the following technology stack:\n\n cloud virtualization and IaaS platform;\n SSD and NVMe storage;\n support for IPv4 and IPv6;\n built-in firewall and network services;\n API, snapshot mechanisms, and resource management automation.",
       "reliability_score": null
     },
     {
@@ -15,20 +22,6 @@
       "title": "Serverspace Announces New Data Centres Worldwide",
       "source_type": "website",
       "excerpt": "Title: Serverspace Announces New Data Centres Worldwide\n# Serverspace Announces New Data Centres Worldwide. - April 21, 2023) - Serverspace, a leading cloud provider, is proud to announce the hardware placement in a new data center in Toronto, Canada. This facility marks the sixth location for Serverspace's global expansion, with existing data centers in five other countries. The equipment at the new data center is housed in Tier III certified facility called Cologix TOR 3, located at 905 King Street in downtown Toronto. Cloud technology has emerged as a game-changer in recent years, providing solutions to various problems with cost and inefficiency faced by businesses and individuals using non-cloud data systems. Some of the significant advantages of cloud technology include cost and infrastructure management, scalability, accessibility, data security, collaboration, software updates, and disaster recovery. Since the data center's launch, users have deployed 24,000 servers. \"Connecting to our high-end data center infrastructure allows Serverspace to be in demand around the world.\". Serverspace's expansion in Toronto is part of its ongoing commitment to providing reliable and scalable cloud solutions to businesses worldwide. Serverspace is a cloud provider has been in the international market for 14 years. With over 120,000 customers and six data centers located all around the globe, Serverspace provides cloud infrastructure rental services, administration, CDN, network services, and tools for automating infrastructure management via API, CLI, and Terraform. Recently, Serverspace was named a Momentum Leader in G2's Spring report, showcasing its commitment to providing reliable and scalable cloud solutions to businesses worldwide. Serverspace's goal is to listen to its customers and provide highly reliable, simple, and available cloud infrastructure to everyone, allowing businesses to focus on their core competencies and achieve success. For those interested in learning more about cloud infrastructure, Serverspace offers a blog and news section, customer stories, and tutorials. They also provide solutions for WordPress Hosting, Application Hosting, Web Hosting, Cloud for Startups, Cloud for E-commerce, and Big Data computing. Regarding the future of Serverspace's services, Dmitry Volkov adds, \"This year, we will open 5 more data centers in EMEA, ATP, and LAD regions. In these data centers, it will be possible to deploy any provider service, including cloud servers and a recently released CDN.",
-      "reliability_score": null
-    },
-    {
-      "url": "https://pq.hosting/en/providers/serverspace",
-      "title": "Serverspace Hosting Provider - Reviews and Rating of Hosting Serverspace Netherlands Rates - PQ.Hosting",
-      "source_type": "website",
-      "excerpt": "PQ.Hosting\n\nPQ.Hosting\n\nServerspace\n\n# Hosting Provider Serverspace\n\nNL Netherlands\n\n5.0\n\n1 review\n\nServerspace is a European cloud provider. The company's services are focused on standard infrastructure tasks: websites and web applications, services with databases, test environments, and small corporate projects.\n\nSecurity [...] Disadvantages\n\n basic backups are not included in the VPS cost and require a separate option;\n additional IPv4 is provided for an extra fee, and free blocks may temporarily run out.\n\nTechnologies Used\n\nServerspace uses the following technology stack:\n\n cloud virtualization and IaaS platform;\n SSD and NVMe storage;\n support for IPv4 and IPv6;\n built-in firewall and network services;\n API, snapshot mechanisms, and resource management automation. [...] Data Centers\n\nServerspace's geography covers seven countries: the Netherlands, the USA, Kazakhstan, Canada, Turkey, the UAE, and Brazil. In terms of reliability, they correspond to Tier III, which ensures stable operation of cloud services and minimizes downtime.\n\nAdvantages\n\n hourly billing and instant resource changes without a reboot;\n DDoS filter up to 10 Gbps is already included in the price;\n\n the ability to stop the server and pay only for disk/IP;\n there is a trial period.",
-      "reliability_score": null
-    },
-    {
-      "url": "https://www.trustpilot.com/review/serverspace.io",
-      "title": "Serverspace is rated \"Average\" with 3.4 / 5 on Trustpilot",
-      "source_type": "website",
-      "excerpt": "Serverspace is an international cloud provider, offering automated virtual infrastructure deployment. Linux or Windows-based services are available from any location on the globe in less than 1 minute. Use this special promo code to double your first payment: 100TPSS.\n\n  \n\n## Contact info\n\n   Herikerbergweg 292, 1101, Amsterdam, Netherlands\n\n   +31 20 262-58-98\n   marketing@serverspace.io\n   serverspace.io\n\n3.4\n\n### Average\n\nImage 10: TrustScore 3.5 out of 5\n138 reviews\n\n5-star\n\n4-star\n\n3-star [...] As for the server location, all Serverspace servers are deployed strictly in the selected region. Rebooting a server does not change its physical location or IP address, as both are assigned when the instance is created. That is why we would like to look into what exactly you observed.  \n  \nWe would appreciate it if you could contact us at csm@serverspace.team or share the email address associated with your account so we can investigate this situation in detail. [...] 2.   Business Services\n3.   IT & Communication\n4.   Cloud Computing Service\n5.   Serverspace\n\nSummary About Reviews\n\nVisit websiteWrite a review\n\nImage 2: Serverspace logo\n\nVisit website\n\nClaimed profile•September 2020\n\n# Serverspace Reviews\n\n138\n\n•\n\nImage 3: TrustScore 3.5 out of 5\n3.4\n\nCloud Computing Service\n\nWrite a reviewVisit website\n\nWrite a review\n\n## Image 4\n\nWe use technology to protect platform integrity, but we don't fact-check reviews",
       "reliability_score": null
     },
     {
@@ -53,95 +46,39 @@
       "reliability_score": null
     },
     {
-      "url": "https://serverspace.io/pricing",
-      "title": "Plans and Pricing | Cloud service provider Serverspace",
-      "source_type": "pricing",
-      "excerpt": "€ 5.6\n\n€ 5.6\n\nServer snapshot\n\n1 GB\n\n€ 0.08\n\n€ 0.08\n\n€ 0.08\n\nServer template\n\n1 GB\n\n€ 0.08\n\n€ 0.08\n\n€ 0.08\n\nSSD\n\n1 GB\n\n€ 0.16\n\n€ 0.16\n\n€ 0.16\n\nSATA\n\n1 GB\n\n€ 0.05\n\n€ 0.05\n\n€ 0.05\n\nNetwork services\n\nService\n\nNetherlands\n\nKazakhstan\n\nUAE\n\nIP Address\n\n€ 1.61\n\n€ 1.61\n\n€ 1.61\n\n1 Mbps\n\n€ 0.16\n\n€ 0.32\n\n€ 0.64\n\nNon-tariffed channel width\n\n10 Mbps\n\n10 Mbps\n\n10 Mbps\n\nBackup\n\nStorage depth\n\nNetherlands\n\nKazakhstan\n\nUAE\n\nVolume size\n\n7 days\n\n€ 0.05\n\n€ 0.05\n\n€ 0.05\n\n1 GB\n\n14 days\n\n€ 0.1\n\n€ 0.1\n\n€ 0.1\n\n1 GB [...] 0.285 € /hr\n\n205.06 € /mo\n\n48 GB\n\n8 Core\n\n720 GB\n\n500 Mbps\n\n0.355 € /hr\n\n255.52 € /mo\n\n\\Data transfer is free and unlimited.\n\n\\\\Prices shown are exclusive of VAT.\n\nDisk space\n\nService\n\nQuantity\n\nCost\n\nVolume, SSD\n\n1 GB\n\n€ 0.1\n\nServer snapshot\n\n1 GB\n\n€ 0.1\n\nNetwork services\n\nService\n\nNetherlands\n\nUSA\n\nKazakhstan\n\nCanada\n\nBrazil\n\nUAE\n\nIP Address\n\n€ 1.5\n\n€ 1.5\n\n€ 1.5\n\n€ 1.5\n\n€ 1.5\n\n€ 1.5\n\n1 Mbps\n\n€ 0.12\n\n€ 0.12\n\n€ 0.23\n\n€ 0.12\n\n€ 0.12\n\n€ 0.46\n\nNon-tariffed channel width\n\n50 Mbps\n\n50 Mbps\n\n10 Mbps [...] € 4.6\n\n€ 4.6\n\n€ 4.6\n\n€ 4.6\n\n€ 4.6\n\n€ 4.6\n\n1 Mbps\n\n€ 0.12\n\n€ 0.12\n\n€ 0.23\n\n€ 0.12\n\n€ 0.12\n\n€ 0.46\n\nIP Address\n\n€ 1.5\n\n€ 1.5\n\n€ 1.5\n\n€ 1.5\n\n€ 1.5\n\n€ 1.5\n\nNon-tariffed channel width\n\n50 Mbps\n\n50 Mbps\n\n30 Mbps\n\n50 Mbps\n\n50 Mbps\n\n10 Mbps\n\n## CDN\n\nVolume\n\nQuantity\n\nCost\n\nTo 100 TB\n\n1 GB\n\n€ 0.03\n\nFrom 100 to 1024 TB\n\n1 GB\n\n€ 0.02\n\nMore then 1024 TB\n\n1 GB\n\n€ 0.01\n\n## Live Streaming\n\nVolume\n\nQuantity\n\nCost\n\nUp to 500 GB\n\n1 GB\n\n€ 0.017\n\nFrom 500 GB to 5 TB\n\n1 GB\n\n€ 0.015\n\nFrom 5 to 10 TB\n\n1 GB\n\n€ 0.014",
+      "url": "https://www.trustpilot.com/review/serverspace.io",
+      "title": "Read Customer Service Reviews of serverspace.io",
+      "source_type": "website",
+      "excerpt": "Serverspace is an international cloud provider, offering automated virtual infrastructure deployment. Linux or Windows-based services are available from any location on the globe in less than 1 minute. Use this special promo code to double your first payment: 100TPSS.\n\n  \n\n## Contact info\n\n   Herikerbergweg 292, 1101, Amsterdam, Netherlands\n\n   +31 20 262-58-98\n   marketing@serverspace.io\n   serverspace.io\n\n3.4\n\n### Average\n\nImage 10: TrustScore 3.5 out of 5\n138 reviews\n\n5-star\n\n4-star\n\n3-star [...] As for the server location, all Serverspace servers are deployed strictly in the selected region. Rebooting a server does not change its physical location or IP address, as both are assigned when the instance is created. That is why we would like to look into what exactly you observed.  \n  \nWe would appreciate it if you could contact us at csm@serverspace.team or share the email address associated with your account so we can investigate this situation in detail. [...] We use Serverspace for hosting Windows VPS's for our clients. The control panel interface is extremely easy to use, the setup is always very fast, and the reliability and uptime of the servers have be... See more\n\nCompany replied\n\nUseful 1\n\nShare\n\nSee all 138 reviews\n\n## Company details\n\n1.   Cloud Computing Service\n2.   Cloud Storage Service\n\n### Written by the company",
+      "reliability_score": null
+    },
+    {
+      "url": "https://serverspace.us",
+      "title": "Serverspace.us",
+      "source_type": "website",
+      "excerpt": "Welcome to the Serverspace control panel. An interface accessible to everyone. Connect cloud services, monitor VPS infrastructure, manage servers costs, and consult with the support – all in one place.\n\nPremium VPS hosting USA provider, delivering customizable cloud VPS solutions tailored to meet diverse business requirements.\n\nVPS United States hosting environment equipped with the latest virtualization technologies, ensuring top performance and flexibility for users. [...] Cutting-edge VPS hosting platform with advanced cloud VPS technology, offering scalable and efficient solutions for businesses worldwide.\n\nReliable VPS cloud server hosted in the United States, designed for high-availability applications and backed by expert support from good VPS providers.\n\nState-of-the-art VPS server USA location, featuring lightning-fast network speeds and enterprise-grade security for demanding web applications. [...] “I’ve been using Serverspace for a while now to handle my virtual infrastructure in cloud computing, and it’s been solid. Their setup for buy VMware hosting is straightforward, and renting a VMware server takes minimal effort. The IaaS cloud options fit well with my workflow, especially when I need to scale up or down without overcomplicating things. It’s a practical choice for anyone who needs reliable cloud resources without the extra fluff.”\n\nAman T.\n\nBack End(Laravel) Developer",
       "reliability_score": null
     }
   ],
   "facts": [
     "Serverspace is an international cloud provider offering automated virtual infrastructure deployment.",
-    "Linux and Windows-based servers can be deployed and made available in less than a minute.",
-    "Serverspace operates within the ITGLOBAL.COM Group of Companies.",
-    "Serverspace data centers correspond to Tier III reliability standards and are located across countries including Canada, the Netherlands, the USA, Kazakhstan, Turkey, the UAE, and Brazil.",
-    "The company has been active in the international market for 14 years and serves over 120,000 customers."
+    "Linux- or Windows-based virtual servers can be deployed in less than a minute.",
+    "Serverspace operates within the ITGLOBAL.COM Group of Companies and is headquartered in Amsterdam, Netherlands.",
+    "Serverspace data centers correspond to Tier III reliability standards.",
+    "Serverspace has data centers across countries including the Netherlands, the USA, Canada, Kazakhstan, Turkey, the UAE, and Brazil."
   ],
-  "pricing": [
-    {
-      "plan": "8 Core / 48 GB RAM / 720 GB / 500 Mbps",
-      "price": "255.52",
-      "currency": "EUR",
-      "billing_period": "monthly",
-      "details": "Also billed at 0.355 € /hr; prices exclusive of VAT; data transfer is free and unlimited.",
-      "source_ids": [
-        "S8"
-      ]
-    },
-    {
-      "plan": "VPS Instance (hourly)",
-      "price": "0.285",
-      "currency": "EUR",
-      "billing_period": "hourly",
-      "details": "Equivalent to 205.06 € /mo; prices exclusive of VAT.",
-      "source_ids": [
-        "S8"
-      ]
-    },
-    {
-      "plan": "IP Address (Netherlands, USA, Canada, Brazil, UAE, Kazakhstan)",
-      "price": "1.5",
-      "currency": "EUR",
-      "billing_period": "monthly",
-      "details": "Price per IP address.",
-      "source_ids": [
-        "S8"
-      ]
-    },
-    {
-      "plan": "Volume, SSD",
-      "price": "0.1",
-      "currency": "EUR",
-      "billing_period": "monthly",
-      "details": "Per 1 GB disk space.",
-      "source_ids": [
-        "S8"
-      ]
-    },
-    {
-      "plan": "CDN (To 100 TB)",
-      "price": "0.03",
-      "currency": "EUR",
-      "billing_period": "per GB",
-      "details": "Per 1 GB for volume up to 100 TB.",
-      "source_ids": [
-        "S8"
-      ]
-    },
-    {
-      "plan": "Backup (7 days depth)",
-      "price": "0.05",
-      "currency": "EUR",
-      "billing_period": "monthly",
-      "details": "Per 1 GB volume size across Netherlands, Kazakhstan, and UAE.",
-      "source_ids": [
-        "S8"
-      ]
-    }
-  ],
+  "pricing": [],
   "pros": [
-    "Services are billed every ten minutes or hourly so clients pay only for the actual time virtual machines are used.",
-    "Rapid server deployment in under one minute.",
-    "Instant resource modifications possible without requiring a server reboot.",
-    "DDoS filter protection up to 10 Gbps is included in the base price.",
-    "Ability to stop the server instance and pay only for disk and IP resources.",
-    "Availability of a trial period.",
-    "Free and unlimited data transfer."
+    "Fast automated deployment of Linux or Windows servers in less than 1 minute.",
+    "10 Gbps DDoS filtering included without additional charge.",
+    "Flexible billing allowing users to pause servers and pay only for disk/IP, with 10-minute or hourly increments.",
+    "Offers a trial period.",
+    "Tier III data center reliability minimizing downtime."
   ],
   "cons": [
-    "Basic backups are not included in the standard VPS cost and must be purchased as an add-on option.",
-    "Additional IPv4 addresses require an extra fee, and free address blocks may temporarily run out."
+    "Basic backups are not included in the standard VPS cost and require a separate fee.",
+    "Additional IPv4 addresses require an extra fee, and free blocks may temporarily run out."
   ],
   "review_status": "pending",
-  "review_note": "Extracted 5 facts, 6 pricing records, 7 features."
+  "review_note": "Extracted 5 facts, 0 pricing records, 10 features."
 }
